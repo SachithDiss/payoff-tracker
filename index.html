@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Loan Statement</title>
+
 <style>
   :root {
     --paper: #FAFAF8;
@@ -21,7 +22,9 @@
     --font-mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
   }
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
 
   body {
     font-family: var(--font-sans);
@@ -40,6 +43,7 @@
   }
 
   /* ---------- Masthead ---------- */
+
   .masthead {
     padding: 28px 24px 18px;
     border-bottom: 2px solid var(--rule-strong);
@@ -84,6 +88,7 @@
   }
 
   /* ---------- Sections ---------- */
+
   .section {
     padding: 20px 24px;
     border-bottom: 1px solid var(--rule);
@@ -99,13 +104,16 @@
   }
 
   /* ---------- Summary ---------- */
+
   .summary-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     row-gap: 14px;
   }
 
-  .summary-item.full { grid-column: 1 / -1; }
+  .summary-item.full {
+    grid-column: 1 / -1;
+  }
 
   .summary-figure {
     font-family: var(--font-mono);
@@ -134,7 +142,8 @@
 
   .progress-fill {
     position: absolute;
-    left: 0; top: 0;
+    left: 0;
+    top: 0;
     height: 100%;
     background: var(--rule-strong);
   }
@@ -149,11 +158,20 @@
   }
 
   /* ---------- Settings ---------- */
-  .settings-panel { display: none; }
-  .settings-panel.open { display: block; }
+
+  .settings-panel {
+    display: none;
+  }
+
+  .settings-panel.open {
+    display: block;
+  }
 
   /* ---------- Forms ---------- */
-  .field { margin-bottom: 16px; }
+
+  .field {
+    margin-bottom: 16px;
+  }
 
   .field-label {
     display: block;
@@ -192,10 +210,19 @@
     margin-top: 4px;
   }
 
-  button.primary:active { background-color: var(--ink); }
+  button.primary:active {
+    background-color: var(--ink);
+  }
 
-  .btn-row { display: flex; gap: 10px; margin-top: 4px; }
-  .btn-row button { flex: 1; }
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .btn-row button {
+    flex: 1;
+  }
 
   button.secondary {
     background: transparent;
@@ -217,9 +244,23 @@
     font-size: 0.85rem;
     letter-spacing: 0.4px;
     cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  button.backup {
+    width: 100%;
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 13px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-bottom: 10px;
   }
 
   /* ---------- Transaction table ---------- */
+
   table.ledger {
     width: 100%;
     border-collapse: collapse;
@@ -237,7 +278,9 @@
     border-bottom: 1px solid var(--rule-strong);
   }
 
-  table.ledger thead th.num { text-align: right; }
+  table.ledger thead th.num {
+    text-align: right;
+  }
 
   table.ledger tbody td {
     padding: 10px 0;
@@ -245,7 +288,9 @@
     vertical-align: top;
   }
 
-  table.ledger tbody tr:last-child td { border-bottom: none; }
+  table.ledger tbody tr:last-child td {
+    border-bottom: none;
+  }
 
   .ledger-date {
     color: var(--ink-soft);
@@ -305,307 +350,1609 @@
     pointer-events: none;
     z-index: 50;
   }
+
   .toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+
+  .storage-status {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    padding: 4px 24px 0;
+  }
+
+  .file-input {
+    display: none;
+  }
 </style>
 </head>
+
 <body>
 
 <div class="sheet">
 
+  <!-- Masthead -->
+
   <div class="masthead">
     <div class="masthead-row">
+
       <div>
         <h1 class="masthead-title">Loan Statement</h1>
-        <div class="masthead-sub">Personal loan tracking record</div>
+        <div class="masthead-sub">
+          Personal loan tracking record
+        </div>
       </div>
+
       <div class="masthead-date">
         <div id="statementDate">—</div>
-        <button class="edit-link" onclick="toggleSettings()">Edit loan details</button>
+
+        <button class="edit-link" onclick="toggleSettings()">
+          Edit loan details
+        </button>
       </div>
+
     </div>
   </div>
+
+
+  <!-- Settings -->
 
   <div class="section settings-panel" id="settingsPanel">
+
     <p class="section-label">Loan details</p>
+
     <div class="field">
-      <label class="field-label">Original principal</label>
-      <input type="number" id="settingsTotalLoan" inputmode="decimal">
+      <label class="field-label">
+        Original principal
+      </label>
+
+      <input
+        type="number"
+        id="settingsTotalLoan"
+        inputmode="decimal"
+      >
     </div>
+
     <div class="field">
-      <label class="field-label">Currency symbol (optional)</label>
-      <input type="text" id="settingsCurrency" placeholder="e.g. $, Rp, ₹">
+      <label class="field-label">
+        Currency symbol (optional)
+      </label>
+
+      <input
+        type="text"
+        id="settingsCurrency"
+        placeholder="e.g. Rs, $, ₹"
+      >
     </div>
+
     <div class="btn-row">
-      <button class="secondary" onclick="toggleSettings()">Cancel</button>
-      <button class="primary" onclick="saveSettings()">Save</button>
+
+      <button
+        class="secondary"
+        onclick="toggleSettings()"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="saveSettings()"
+      >
+        Save
+      </button>
+
     </div>
+
   </div>
 
+
+  <!-- Summary -->
+
   <div class="section">
-    <p class="section-label">Account summary</p>
+
+    <p class="section-label">
+      Account summary
+    </p>
+
     <div class="summary-grid">
+
       <div class="summary-item">
-        <div class="summary-figure" id="statLoan">—</div>
-        <div class="summary-caption">Original principal</div>
+
+        <div
+          class="summary-figure"
+          id="statLoan"
+        >
+          —
+        </div>
+
+        <div class="summary-caption">
+          Original principal
+        </div>
+
       </div>
+
+
       <div class="summary-item">
-        <div class="summary-figure" id="statPaid">—</div>
-        <div class="summary-caption">Paid to date</div>
+
+        <div
+          class="summary-figure"
+          id="statPaid"
+        >
+          —
+        </div>
+
+        <div class="summary-caption">
+          Paid to date
+        </div>
+
       </div>
+
+
       <div class="summary-item full">
-        <div class="summary-figure" id="balanceDisplay">—</div>
-        <div class="summary-caption">Outstanding balance</div>
+
+        <div
+          class="summary-figure"
+          id="balanceDisplay"
+        >
+          —
+        </div>
+
+        <div class="summary-caption">
+          Outstanding balance
+        </div>
+
       </div>
+
     </div>
-    <div class="progress-rule"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+
+    <div class="progress-rule">
+
+      <div
+        class="progress-fill"
+        id="progressFill"
+        style="width:0%"
+      ></div>
+
+    </div>
+
+
     <div class="progress-caption">
-      <span id="statPercent">0.00% paid</span>
-      <span id="statCount">0 payments</span>
+
+      <span id="statPercent">
+        0.00% paid
+      </span>
+
+      <span id="statCount">
+        0 payments
+      </span>
+
     </div>
+
   </div>
 
-  <div class="section">
-    <p class="section-label">Record a payment</p>
-    <div class="field">
-      <label class="field-label">Amount</label>
-      <input type="number" id="amount" placeholder="0.00" inputmode="decimal">
-    </div>
-    <div class="field">
-      <label class="field-label">Reference / note (optional)</label>
-      <input type="text" id="note" placeholder="e.g. Bonus payment">
-    </div>
-    <button class="primary" onclick="submitPayment()">Record payment</button>
-  </div>
+
+  <!-- Record payment -->
 
   <div class="section">
-    <p class="section-label">Transaction history</p>
+
+    <p class="section-label">
+      Record a payment
+    </p>
+
+    <div class="field">
+
+      <label class="field-label">
+        Amount
+      </label>
+
+      <input
+        type="number"
+        id="amount"
+        placeholder="0.00"
+        inputmode="decimal"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label class="field-label">
+        Reference / note (optional)
+      </label>
+
+      <input
+        type="text"
+        id="note"
+        placeholder="e.g. Monthly payment"
+      >
+
+    </div>
+
+
+    <button
+      class="primary"
+      onclick="submitPayment()"
+    >
+      Record payment
+    </button>
+
+  </div>
+
+
+  <!-- Transaction history -->
+
+  <div class="section">
+
+    <p class="section-label">
+      Transaction history
+    </p>
+
     <table class="ledger">
+
       <thead>
+
         <tr>
-          <th>Date</th>
-          <th class="num">Amount</th>
+
+          <th>
+            Date
+          </th>
+
+          <th class="num">
+            Amount
+          </th>
+
           <th></th>
+
         </tr>
+
       </thead>
+
       <tbody id="historyBody">
-        <tr><td colspan="3"><div class="empty-state">Loading…</div></td></tr>
+
+        <tr>
+          <td colspan="3">
+
+            <div class="empty-state">
+              Loading…
+            </div>
+
+          </td>
+        </tr>
+
       </tbody>
+
     </table>
+
   </div>
 
-  <div class="section" style="border-bottom:none;">
-    <button class="export" onclick="exportExcel()">Download statement (Excel)</button>
+
+  <!-- Backup / Export -->
+
+  <div
+    class="section"
+    style="border-bottom:none;"
+  >
+
+    <button
+      class="export"
+      onclick="exportExcel()"
+    >
+      Download statement (Excel)
+    </button>
+
+    <button
+      class="backup"
+      onclick="backupData()"
+    >
+      Backup loan data
+    </button>
+
+    <button
+      class="backup"
+      onclick="document.getElementById('restoreFile').click()"
+    >
+      Restore loan data
+    </button>
+
+    <input
+      type="file"
+      id="restoreFile"
+      class="file-input"
+      accept=".json,application/json"
+      onchange="restoreData(event)"
+    >
+
   </div>
+
+
+  <div class="storage-status">
+    Data is stored locally on this iPhone.
+  </div>
+
 
   <p class="footnote">
-    This record is stored securely within this application. Export a statement
-    periodically to retain an independent copy of your payment history.
+
+    Your loan and payment records are stored locally in this
+    browser on this device. Use "Backup loan data" periodically
+    to keep an independent copy of your records.
+
   </p>
+
 </div>
 
-<div class="toast" id="toast"></div>
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<!-- Excel library -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
 <script>
-  const STORAGE_KEY = 'loan-tracker-data';
-  const DEFAULT_STATE = { totalLoan: 4550000, currency: '', payments: [] };
 
-  let state = null;
+/* ============================================================
+   DATABASE
+   ============================================================ */
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
+const DB_NAME = 'LoanTrackerDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'loanData';
 
-  function formatMoney(amount) {
-    const sym = state && state.currency ? state.currency + ' ' : '';
-    return sym + new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
-  }
+const DEFAULT_STATE = {
+  totalLoan: 4550000,
+  currency: '',
+  payments: []
+};
 
-  function formatDate(dateString) {
-    const d = new Date(dateString);
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) +
-      ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  }
+let state = null;
+let db = null;
 
-  async function loadState() {
-    try {
-      const result = await window.storage.get(STORAGE_KEY, false);
-      return result ? JSON.parse(result.value) : { ...DEFAULT_STATE };
-    } catch (e) {
-      return { ...DEFAULT_STATE };
-    }
-  }
 
-  async function persistState() {
-    try {
-      const ok = await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
-      if (!ok) showToast('Could not save — please try again');
-    } catch (e) {
-      showToast('Could not save — please try again');
-    }
-  }
+/* ============================================================
+   OPEN INDEXEDDB
+   ============================================================ */
 
-  function totals() {
-    const totalPaid = state.payments.reduce((sum, p) => sum + p.amount, 0);
-    const remaining = state.totalLoan - totalPaid;
-    const percent = state.totalLoan > 0 ? Math.min(100, (totalPaid / state.totalLoan) * 100) : 0;
-    return { totalPaid, remaining, percent };
-  }
+function openDatabase() {
 
-  function render() {
-    const { totalPaid, remaining, percent } = totals();
+  return new Promise((resolve, reject) => {
 
-    document.getElementById('statementDate').textContent = new Date().toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    });
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-    document.getElementById('balanceDisplay').textContent = formatMoney(remaining);
-    document.getElementById('statLoan').textContent = formatMoney(state.totalLoan);
-    document.getElementById('statPaid').textContent = formatMoney(totalPaid);
-    document.getElementById('progressFill').style.width = percent.toFixed(1) + '%';
-    document.getElementById('statPercent').textContent = percent.toFixed(2) + '% paid';
-    document.getElementById('statCount').textContent = state.payments.length +
-      (state.payments.length === 1 ? ' payment' : ' payments');
 
-    const body = document.getElementById('historyBody');
-    const sorted = [...state.payments].sort((a, b) => new Date(b.date) - new Date(a.date));
+    request.onupgradeneeded = function(event) {
 
-    if (sorted.length === 0) {
-      body.innerHTML = '<tr><td colspan="3"><div class="empty-state">No payments recorded yet.</div></td></tr>';
+      const database = event.target.result;
+
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+
+        database.createObjectStore(
+          STORE_NAME,
+          { keyPath: 'id' }
+        );
+
+      }
+
+    };
+
+
+    request.onsuccess = function(event) {
+
+      db = event.target.result;
+
+      resolve(db);
+
+    };
+
+
+    request.onerror = function() {
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+/* ============================================================
+   SAVE DATA TO INDEXEDDB
+   ============================================================ */
+
+function saveToDatabase(data) {
+
+  return new Promise((resolve, reject) => {
+
+    if (!db) {
+
+      reject(new Error('Database not initialized'));
+
       return;
+
     }
 
-    body.innerHTML = sorted.map(p => `
+
+    const transaction =
+      db.transaction(
+        STORE_NAME,
+        'readwrite'
+      );
+
+
+    const store =
+      transaction.objectStore(STORE_NAME);
+
+
+    const request =
+      store.put({
+        id: 'main',
+        data: data
+      });
+
+
+    request.onsuccess = function() {
+
+      resolve();
+
+    };
+
+
+    request.onerror = function() {
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+/* ============================================================
+   LOAD DATA FROM INDEXEDDB
+   ============================================================ */
+
+function loadFromDatabase() {
+
+  return new Promise((resolve, reject) => {
+
+    if (!db) {
+
+      reject(new Error('Database not initialized'));
+
+      return;
+
+    }
+
+
+    const transaction =
+      db.transaction(
+        STORE_NAME,
+        'readonly'
+      );
+
+
+    const store =
+      transaction.objectStore(STORE_NAME);
+
+
+    const request =
+      store.get('main');
+
+
+    request.onsuccess = function() {
+
+      if (request.result) {
+
+        resolve(request.result.data);
+
+      } else {
+
+        resolve(null);
+
+      }
+
+    };
+
+
+    request.onerror = function() {
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+/* ============================================================
+   LOAD APPLICATION STATE
+   ============================================================ */
+
+async function loadState() {
+
+  try {
+
+    await openDatabase();
+
+    const savedState =
+      await loadFromDatabase();
+
+
+    if (savedState) {
+
+      return normalizeState(savedState);
+
+    }
+
+
+    /*
+      First time using the new version.
+      We create a fresh state.
+    */
+
+    const initialState = {
+      ...DEFAULT_STATE,
+      payments: []
+    };
+
+
+    await saveToDatabase(initialState);
+
+    return initialState;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      'Database error:',
+      error
+    );
+
+    alert(
+      'Could not access local storage on this device.'
+    );
+
+    return {
+      ...DEFAULT_STATE
+    };
+
+  }
+
+}
+
+
+/* ============================================================
+   NORMALIZE DATA
+   ============================================================ */
+
+function normalizeState(data) {
+
+  return {
+
+    totalLoan:
+      Number(data.totalLoan) || DEFAULT_STATE.totalLoan,
+
+    currency:
+      typeof data.currency === 'string'
+        ? data.currency
+        : '',
+
+    payments:
+      Array.isArray(data.payments)
+        ? data.payments
+        : []
+
+  };
+
+}
+
+
+/* ============================================================
+   PERSIST STATE
+   ============================================================ */
+
+async function persistState() {
+
+  try {
+
+    await saveToDatabase(state);
+
+    return true;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      'Could not save data:',
+      error
+    );
+
+    showToast(
+      'Could not save data'
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+function showToast(msg) {
+
+  const toast =
+    document.getElementById('toast');
+
+
+  toast.textContent = msg;
+
+  toast.classList.add('show');
+
+
+  setTimeout(() => {
+
+    toast.classList.remove('show');
+
+  }, 2200);
+
+}
+
+
+/* ============================================================
+   FORMAT MONEY
+   ============================================================ */
+
+function formatMoney(amount) {
+
+  const sym =
+    state && state.currency
+      ? state.currency + ' '
+      : '';
+
+
+  return sym +
+    new Intl.NumberFormat(
+      'en-US',
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    ).format(amount);
+
+}
+
+
+/* ============================================================
+   FORMAT DATE
+   ============================================================ */
+
+function formatDate(dateString) {
+
+  const d =
+    new Date(dateString);
+
+
+  return d.toLocaleDateString(
+    'en-US',
+    {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    }
+  )
+  +
+  ' · '
+  +
+  d.toLocaleTimeString(
+    'en-US',
+    {
+      hour: '2-digit',
+      minute: '2-digit'
+    }
+  );
+
+}
+
+
+/* ============================================================
+   CALCULATE TOTALS
+   ============================================================ */
+
+function totals() {
+
+  const totalPaid =
+    state.payments.reduce(
+      (sum, payment) =>
+        sum + Number(payment.amount),
+      0
+    );
+
+
+  const remaining =
+    state.totalLoan - totalPaid;
+
+
+  const percent =
+    state.totalLoan > 0
+      ? Math.min(
+          100,
+          (totalPaid / state.totalLoan) * 100
+        )
+      : 0;
+
+
+  return {
+    totalPaid,
+    remaining,
+    percent
+  };
+
+}
+
+
+/* ============================================================
+   RENDER UI
+   ============================================================ */
+
+function render() {
+
+  const {
+    totalPaid,
+    remaining,
+    percent
+  } = totals();
+
+
+  document.getElementById(
+    'statementDate'
+  ).textContent =
+    new Date().toLocaleDateString(
+      'en-US',
+      {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
+    );
+
+
+  document.getElementById(
+    'balanceDisplay'
+  ).textContent =
+    formatMoney(remaining);
+
+
+  document.getElementById(
+    'statLoan'
+  ).textContent =
+    formatMoney(state.totalLoan);
+
+
+  document.getElementById(
+    'statPaid'
+  ).textContent =
+    formatMoney(totalPaid);
+
+
+  document.getElementById(
+    'progressFill'
+  ).style.width =
+    percent.toFixed(1) + '%';
+
+
+  document.getElementById(
+    'statPercent'
+  ).textContent =
+    percent.toFixed(2) + '% paid';
+
+
+  document.getElementById(
+    'statCount'
+  ).textContent =
+    state.payments.length +
+    (
+      state.payments.length === 1
+        ? ' payment'
+        : ' payments'
+    );
+
+
+  const body =
+    document.getElementById(
+      'historyBody'
+    );
+
+
+  const sorted =
+    [...state.payments].sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    );
+
+
+  if (sorted.length === 0) {
+
+    body.innerHTML = `
       <tr>
-        <td>
-          <div class="ledger-date">${formatDate(p.date)}</div>
-          ${p.note ? `<div class="ledger-note">${escapeHtml(p.note)}</div>` : ''}
+        <td colspan="3">
+          <div class="empty-state">
+            No payments recorded yet.
+          </div>
         </td>
-        <td class="ledger-amount">${formatMoney(p.amount)}</td>
-        <td><button class="ledger-delete" onclick="deletePayment('${p.id}')" title="Delete entry">✕</button></td>
       </tr>
+    `;
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    sorted.map(payment => `
+
+      <tr>
+
+        <td>
+
+          <div class="ledger-date">
+            ${formatDate(payment.date)}
+          </div>
+
+          ${
+            payment.note
+              ? `
+                <div class="ledger-note">
+                  ${escapeHtml(payment.note)}
+                </div>
+              `
+              : ''
+          }
+
+        </td>
+
+
+        <td class="ledger-amount">
+          ${formatMoney(payment.amount)}
+        </td>
+
+
+        <td>
+
+          <button
+            class="ledger-delete"
+            onclick="deletePayment('${payment.id}')"
+            title="Delete entry"
+          >
+            ✕
+          </button>
+
+        </td>
+
+      </tr>
+
     `).join('');
+
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+   ============================================================ */
+
+function escapeHtml(str) {
+
+  const div =
+    document.createElement('div');
+
+
+  div.textContent = str;
+
+
+  return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   ADD PAYMENT
+   ============================================================ */
+
+async function submitPayment() {
+
+  const amountInput =
+    document.getElementById('amount');
+
+
+  const noteInput =
+    document.getElementById('note');
+
+
+  const amount =
+    parseFloat(amountInput.value);
+
+
+  if (
+    isNaN(amount) ||
+    amount <= 0
+  ) {
+
+    alert(
+      'Please enter a valid payment amount.'
+    );
+
+    return;
+
   }
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
 
-  async function submitPayment() {
-    const amountInput = document.getElementById('amount');
-    const noteInput = document.getElementById('note');
-    const amount = parseFloat(amountInput.value);
+  /*
+    Optional protection:
+    Don't allow payment larger than
+    the remaining balance.
+  */
 
-    if (isNaN(amount) || amount <= 0) {
-      return alert('Please enter a valid payment amount.');
+  const {
+    remaining
+  } = totals();
+
+
+  if (amount > remaining) {
+
+    const continuePayment =
+      confirm(
+        'This payment is larger than the outstanding balance. Continue?'
+      );
+
+
+    if (!continuePayment) {
+
+      return;
+
     }
 
-    state.payments.push({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-      amount,
-      note: noteInput.value.trim(),
-      date: new Date().toISOString()
-    });
+  }
 
-    amountInput.value = '';
-    noteInput.value = '';
-    render();
+
+  const payment = {
+
+    id:
+      Date.now().toString(36)
+      +
+      Math.random()
+        .toString(36)
+        .slice(2, 7),
+
+    amount: amount,
+
+    note:
+      noteInput.value.trim(),
+
+    date:
+      new Date().toISOString()
+
+  };
+
+
+  state.payments.push(payment);
+
+
+  /*
+    IMPORTANT:
+    Save BEFORE showing success.
+  */
+
+  const saved =
     await persistState();
-    showToast('Payment recorded');
-  }
 
-  async function deletePayment(id) {
-    if (!confirm('Delete this payment entry? This cannot be undone.')) return;
-    state.payments = state.payments.filter(p => p.id !== id);
+
+  if (!saved) {
+
+    /*
+      Remove payment again if saving failed.
+    */
+
+    state.payments =
+      state.payments.filter(
+        p => p.id !== payment.id
+      );
+
     render();
+
+    return;
+
+  }
+
+
+  amountInput.value = '';
+
+  noteInput.value = '';
+
+
+  render();
+
+
+  showToast(
+    'Payment recorded and saved'
+  );
+
+}
+
+
+/* ============================================================
+   DELETE PAYMENT
+   ============================================================ */
+
+async function deletePayment(id) {
+
+  if (
+    !confirm(
+      'Delete this payment entry? This cannot be undone.'
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const oldPayments =
+    [...state.payments];
+
+
+  state.payments =
+    state.payments.filter(
+      payment =>
+        payment.id !== id
+    );
+
+
+  const saved =
     await persistState();
-    showToast('Entry deleted');
-  }
 
-  function toggleSettings() {
-    const panel = document.getElementById('settingsPanel');
-    document.getElementById('settingsTotalLoan').value = state.totalLoan;
-    document.getElementById('settingsCurrency').value = state.currency;
-    panel.classList.toggle('open');
-  }
 
-  async function saveSettings() {
-    const newTotal = parseFloat(document.getElementById('settingsTotalLoan').value);
-    if (isNaN(newTotal) || newTotal <= 0) {
-      return alert('Please enter a valid loan amount.');
-    }
-    state.totalLoan = newTotal;
-    state.currency = document.getElementById('settingsCurrency').value.trim();
-    document.getElementById('settingsPanel').classList.remove('open');
+  if (!saved) {
+
+    state.payments =
+      oldPayments;
+
     render();
-    await persistState();
-    showToast('Loan details updated');
+
+    return;
+
   }
 
-  function exportExcel() {
-    if (typeof XLSX === 'undefined') {
-      return alert('Excel library failed to load — check your connection and try again.');
-    }
 
-    const { totalPaid, remaining, percent } = totals();
+  render();
 
-    const summaryRows = [
-      ['Loan Statement — Summary'],
-      [],
-      ['Original Principal', state.totalLoan],
-      ['Total Paid', totalPaid],
-      ['Outstanding Balance', remaining],
-      ['Percent Paid', percent.toFixed(2) + '%'],
-      ['Number of Payments', state.payments.length],
-      ['Statement Generated', new Date().toLocaleString()]
-    ];
-    const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
-    summarySheet['!cols'] = [{ wch: 24 }, { wch: 22 }];
+  showToast(
+    'Entry deleted'
+  );
 
-    const sortedAsc = [...state.payments].sort((a, b) => new Date(a.date) - new Date(b.date));
-    let running = state.totalLoan;
-    const historyRows = [['#', 'Date', 'Time', 'Amount Paid', 'Reference / Note', 'Outstanding Balance']];
-    sortedAsc.forEach((p, i) => {
-      running -= p.amount;
-      const d = new Date(p.date);
+}
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+function toggleSettings() {
+
+  const panel =
+    document.getElementById(
+      'settingsPanel'
+    );
+
+
+  document.getElementById(
+    'settingsTotalLoan'
+  ).value =
+    state.totalLoan;
+
+
+  document.getElementById(
+    'settingsCurrency'
+  ).value =
+    state.currency;
+
+
+  panel.classList.toggle(
+    'open'
+  );
+
+}
+
+
+/* ============================================================
+   SAVE SETTINGS
+   ============================================================ */
+
+async function saveSettings() {
+
+  const newTotal =
+    parseFloat(
+      document.getElementById(
+        'settingsTotalLoan'
+      ).value
+    );
+
+
+  if (
+    isNaN(newTotal) ||
+    newTotal <= 0
+  ) {
+
+    alert(
+      'Please enter a valid loan amount.'
+    );
+
+    return;
+
+  }
+
+
+  const oldTotal =
+    state.totalLoan;
+
+
+  const oldCurrency =
+    state.currency;
+
+
+  state.totalLoan =
+    newTotal;
+
+
+  state.currency =
+    document.getElementById(
+      'settingsCurrency'
+    ).value.trim();
+
+
+  const saved =
+    await persistState();
+
+
+  if (!saved) {
+
+    state.totalLoan =
+      oldTotal;
+
+    state.currency =
+      oldCurrency;
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    'settingsPanel'
+  ).classList.remove('open');
+
+
+  render();
+
+
+  showToast(
+    'Loan details updated'
+  );
+
+}
+
+
+/* ============================================================
+   EXCEL EXPORT
+   ============================================================ */
+
+function exportExcel() {
+
+  if (
+    typeof XLSX === 'undefined'
+  ) {
+
+    alert(
+      'Excel library failed to load — check your connection and try again.'
+    );
+
+    return;
+
+  }
+
+
+  const {
+    totalPaid,
+    remaining,
+    percent
+  } = totals();
+
+
+  const summaryRows = [
+
+    ['Loan Statement — Summary'],
+
+    [],
+
+    ['Original Principal', state.totalLoan],
+
+    ['Total Paid', totalPaid],
+
+    ['Outstanding Balance', remaining],
+
+    ['Percent Paid', percent.toFixed(2) + '%'],
+
+    ['Number of Payments', state.payments.length],
+
+    [
+      'Statement Generated',
+      new Date().toLocaleString()
+    ]
+
+  ];
+
+
+  const summarySheet =
+    XLSX.utils.aoa_to_sheet(
+      summaryRows
+    );
+
+
+  summarySheet['!cols'] = [
+    { wch: 24 },
+    { wch: 22 }
+  ];
+
+
+  const sortedAsc =
+    [...state.payments].sort(
+      (a, b) =>
+        new Date(a.date) -
+        new Date(b.date)
+    );
+
+
+  let running =
+    state.totalLoan;
+
+
+  const historyRows = [
+
+    [
+      '#',
+      'Date',
+      'Time',
+      'Amount Paid',
+      'Reference / Note',
+      'Outstanding Balance'
+    ]
+
+  ];
+
+
+  sortedAsc.forEach(
+    (payment, index) => {
+
+      running -=
+        Number(payment.amount);
+
+
+      const d =
+        new Date(payment.date);
+
+
       historyRows.push([
-        i + 1,
-        d.toLocaleDateString('en-US'),
-        d.toLocaleTimeString('en-US'),
-        p.amount,
-        p.note || '',
+
+        index + 1,
+
+        d.toLocaleDateString(
+          'en-US'
+        ),
+
+        d.toLocaleTimeString(
+          'en-US'
+        ),
+
+        payment.amount,
+
+        payment.note || '',
+
         running
+
       ]);
-    });
-    const historySheet = XLSX.utils.aoa_to_sheet(historyRows);
-    historySheet['!cols'] = [{ wch: 5 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 32 }, { wch: 18 }];
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, summarySheet, 'Summary');
-    XLSX.utils.book_append_sheet(wb, historySheet, 'Payment History');
+    }
+  );
 
-    const filename = `loan-statement-${new Date().toISOString().slice(0, 10)}.xlsx`;
-    XLSX.writeFile(wb, filename);
-    showToast('Statement downloaded');
+
+  const historySheet =
+    XLSX.utils.aoa_to_sheet(
+      historyRows
+    );
+
+
+  historySheet['!cols'] = [
+
+    { wch: 5 },
+
+    { wch: 14 },
+
+    { wch: 12 },
+
+    { wch: 16 },
+
+    { wch: 32 },
+
+    { wch: 18 }
+
+  ];
+
+
+  const workbook =
+    XLSX.utils.book_new();
+
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    summarySheet,
+    'Summary'
+  );
+
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    historySheet,
+    'Payment History'
+  );
+
+
+  const filename =
+    `loan-statement-${
+      new Date()
+        .toISOString()
+        .slice(0, 10)
+    }.xlsx`;
+
+
+  XLSX.writeFile(
+    workbook,
+    filename
+  );
+
+
+  showToast(
+    'Statement downloaded'
+  );
+
+}
+
+
+/* ============================================================
+   BACKUP DATA
+   ============================================================ */
+
+function backupData() {
+
+  if (!state) {
+
+    alert(
+      'Data is not loaded yet.'
+    );
+
+    return;
+
   }
 
-  async function init() {
-    state = await loadState();
+
+  const backup = {
+
+    app: 'Loan Statement',
+
+    version: 1,
+
+    exportedAt:
+      new Date().toISOString(),
+
+    data: state
+
+  };
+
+
+  const json =
+    JSON.stringify(
+      backup,
+      null,
+      2
+    );
+
+
+  const blob =
+    new Blob(
+      [json],
+      {
+        type:
+          'application/json'
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const link =
+    document.createElement('a');
+
+
+  link.href = url;
+
+
+  link.download =
+    `loan-backup-${
+      new Date()
+        .toISOString()
+        .slice(0, 10)
+    }.json`;
+
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+
+  URL.revokeObjectURL(url);
+
+
+  showToast(
+    'Backup created'
+  );
+
+}
+
+
+/* ============================================================
+   RESTORE DATA
+   ============================================================ */
+
+async function restoreData(event) {
+
+  const file =
+    event.target.files[0];
+
+
+  if (!file) {
+
+    return;
+
+  }
+
+
+  try {
+
+    const text =
+      await file.text();
+
+
+    const backup =
+      JSON.parse(text);
+
+
+    /*
+      Support the expected backup format.
+    */
+
+    if (
+      !backup.data ||
+      typeof backup.data !== 'object'
+    ) {
+
+      throw new Error(
+        'Invalid backup file'
+      );
+
+    }
+
+
+    const restored =
+      normalizeState(
+        backup.data
+      );
+
+
+    /*
+      Ask before replacing existing data.
+    */
+
+    const confirmed =
+      confirm(
+        'This will replace the current loan data with the backup. Continue?'
+      );
+
+
+    if (!confirmed) {
+
+      event.target.value = '';
+
+      return;
+
+    }
+
+
+    state =
+      restored;
+
+
+    await persistState();
+
+
     render();
+
+
+    showToast(
+      'Backup restored successfully'
+    );
+
   }
 
-  init();
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      'Could not restore this file. Please select a valid loan backup.'
+    );
+
+  }
+
+
+  /*
+    Reset file input so the
+    same file can be selected again.
+  */
+
+  event.target.value = '';
+
+}
+
+
+/* ============================================================
+   INITIALIZE APPLICATION
+   ============================================================ */
+
+async function init() {
+
+  state =
+    await loadState();
+
+
+  render();
+
+}
+
+
+init();
+
 </script>
+
 </body>
 </html>
