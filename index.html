@@ -1,304 +1,611 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Loan Tracker</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Loan Statement</title>
+<style>
+  :root {
+    --paper: #FAFAF8;
+    --surface: #FFFFFF;
+    --rule: #D7DADE;
+    --rule-strong: #1F2733;
+    --ink: #191D24;
+    --ink-soft: #565D68;
+    --ink-faint: #8A909B;
+    --accent: #6B1F2A;
+    --font-serif: Georgia, "Times New Roman", Times, serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-        }
+  * { box-sizing: border-box; }
 
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 40px 20px 60px;
-            text-align: center;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--paper);
+    margin: 0;
+    padding: 0;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
 
-        .header h1 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 500;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  .sheet {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--surface);
+    min-height: 100vh;
+  }
 
-        .balance {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin: 10px 0 0;
-            letter-spacing: -1px;
-        }
+  /* ---------- Masthead ---------- */
+  .masthead {
+    padding: 28px 24px 18px;
+    border-bottom: 2px solid var(--rule-strong);
+  }
 
-        .container {
-            max-width: 500px;
-            margin: -30px auto 20px;
-            padding: 0 16px;
-        }
+  .masthead-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            margin-bottom: 20px;
-        }
+  .masthead-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    letter-spacing: 0.3px;
+    margin: 0;
+  }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: var(--text-main);
-        }
+  .masthead-sub {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
 
-        .input-group {
-            margin-bottom: 12px;
-        }
+  .masthead-date {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    text-align: right;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
 
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 16px; /* Prevents auto-zoom on mobile */
-            background-color: #f9fafb;
-            transition: border-color 0.2s;
-        }
+  .edit-link {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 6px;
+  }
 
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: #fff;
-        }
+  /* ---------- Sections ---------- */
+  .section {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--rule);
+  }
 
-        button {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
-        }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+  }
 
-        button:active {
-            background-color: var(--primary-dark);
-            transform: translateY(1px);
-        }
+  /* ---------- Summary ---------- */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 14px;
+  }
 
-        .history-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+  .summary-item.full { grid-column: 1 / -1; }
 
-        .history-item {
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+  .summary-figure {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
 
-        .history-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
+  .summary-item.full .summary-figure {
+    font-size: 1.9rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
 
-        .history-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
+  .summary-caption {
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
 
-        .history-amount {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #059669; /* Green for payments */
-        }
+  .progress-rule {
+    margin-top: 16px;
+    height: 2px;
+    background: var(--rule);
+    position: relative;
+  }
 
-        .history-date {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+  .progress-fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    background: var(--rule-strong);
+  }
 
-        .history-note {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            background: #f3f4f6;
-            padding: 6px 10px;
-            border-radius: 6px;
-            display: inline-block;
-            margin-top: 4px;
-        }
+  .progress-caption {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    margin-top: 6px;
+    font-family: var(--font-mono);
+  }
 
-        .btn-backup {
-            background-color: #4b5563;
-            margin-top: 10px;
-        }
-        
-        .footer-text {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 20px;
-            padding-bottom: 30px;
-        }
-    </style>
+  /* ---------- Settings ---------- */
+  .settings-panel { display: none; }
+  .settings-panel.open { display: block; }
+
+  /* ---------- Forms ---------- */
+  .field { margin-bottom: 16px; }
+
+  .field-label {
+    display: block;
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 9px 2px;
+    border: none;
+    border-bottom: 1px solid var(--rule);
+    background: transparent;
+    font-size: 16px;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    border-radius: 0;
+  }
+
+  input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  button.primary {
+    width: 100%;
+    padding: 13px;
+    background-color: var(--rule-strong);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
+  button.primary:active { background-color: var(--ink); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-row button { flex: 1; }
+
+  button.secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 13px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  button.export {
+    width: 100%;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+    border-radius: 2px;
+    padding: 13px;
+    font-size: 0.85rem;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+  }
+
+  /* ---------- Transaction table ---------- */
+  table.ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+
+  table.ledger thead th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  table.ledger thead th.num { text-align: right; }
+
+  table.ledger tbody td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  table.ledger tbody tr:last-child td { border-bottom: none; }
+
+  .ledger-date {
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .ledger-note {
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  .ledger-amount {
+    font-family: var(--font-mono);
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ledger-delete {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0 0 0 10px;
+    vertical-align: top;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+    padding: 20px 0;
+  }
+
+  .footnote {
+    padding: 18px 24px 26px;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--rule-strong);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Remaining Balance</h1>
-    <div class="balance" id="balanceDisplay">Loading...</div>
+<div class="sheet">
+
+  <div class="masthead">
+    <div class="masthead-row">
+      <div>
+        <h1 class="masthead-title">Loan Statement</h1>
+        <div class="masthead-sub">Personal loan tracking record</div>
+      </div>
+      <div class="masthead-date">
+        <div id="statementDate">—</div>
+        <button class="edit-link" onclick="toggleSettings()">Edit loan details</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section settings-panel" id="settingsPanel">
+    <p class="section-label">Loan details</p>
+    <div class="field">
+      <label class="field-label">Original principal</label>
+      <input type="number" id="settingsTotalLoan" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label class="field-label">Currency symbol (optional)</label>
+      <input type="text" id="settingsCurrency" placeholder="e.g. $, Rp, ₹">
+    </div>
+    <div class="btn-row">
+      <button class="secondary" onclick="toggleSettings()">Cancel</button>
+      <button class="primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Account summary</p>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-figure" id="statLoan">—</div>
+        <div class="summary-caption">Original principal</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-figure" id="statPaid">—</div>
+        <div class="summary-caption">Paid to date</div>
+      </div>
+      <div class="summary-item full">
+        <div class="summary-figure" id="balanceDisplay">—</div>
+        <div class="summary-caption">Outstanding balance</div>
+      </div>
+    </div>
+    <div class="progress-rule"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-caption">
+      <span id="statPercent">0.00% paid</span>
+      <span id="statCount">0 payments</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Record a payment</p>
+    <div class="field">
+      <label class="field-label">Amount</label>
+      <input type="number" id="amount" placeholder="0.00" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label class="field-label">Reference / note (optional)</label>
+      <input type="text" id="note" placeholder="e.g. Bonus payment">
+    </div>
+    <button class="primary" onclick="submitPayment()">Record payment</button>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Transaction history</p>
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th class="num">Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr><td colspan="3"><div class="empty-state">Loading…</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" style="border-bottom:none;">
+    <button class="export" onclick="exportExcel()">Download statement (Excel)</button>
+  </div>
+
+  <p class="footnote">
+    This record is stored securely within this application. Export a statement
+    periodically to retain an independent copy of your payment history.
+  </p>
 </div>
 
-<div class="container">
-    <div class="card">
-        <h2 class="card-title">Make a Payment</h2>
-        <div class="input-group">
-            <input type="number" id="amount" placeholder="Payment Amount (e.g. 5000)" inputmode="decimal">
-        </div>
-        <div class="input-group">
-            <input type="text" id="note" placeholder="Note (Optional, e.g. 'Bonus pay')">
-        </div>
-        <button onclick="savePayment()">Submit Payment</button>
-    </div>
+<div class="toast" id="toast"></div>
 
-    <div class="card">
-        <h2 class="card-title">Payment History</h2>
-        <ul class="history-list" id="historyList">
-            <!-- History items will load here -->
-        </ul>
-    </div>
-
-    <button class="btn-backup" onclick="exportData()">💾 Download Backup</button>
-    <p class="footer-text">
-        Data is securely saved to this device's browser cache.<br>
-        Export backups regularly to prevent data loss.
-    </p>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    // Set your starting total loan amount here
-    const TOTAL_LOAN = 4550000; 
+  const STORAGE_KEY = 'loan-tracker-data';
+  const DEFAULT_STATE = { totalLoan: 4550000, currency: '', payments: [] };
 
-    // Load existing data from phone's local storage
-    let payments = JSON.parse(localStorage.getItem('myLoanData')) || [];
+  let state = null;
 
-    // Formats numbers with commas (e.g. 4,550,000)
-    function formatMoney(amount) {
-        return new Intl.NumberFormat('en-US').format(amount);
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function formatMoney(amount) {
+    const sym = state && state.currency ? state.currency + ' ' : '';
+    return sym + new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+  }
+
+  function formatDate(dateString) {
+    const d = new Date(dateString);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) +
+      ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function loadState() {
+    try {
+      const result = await window.storage.get(STORAGE_KEY, false);
+      return result ? JSON.parse(result.value) : { ...DEFAULT_STATE };
+    } catch (e) {
+      return { ...DEFAULT_STATE };
+    }
+  }
+
+  async function persistState() {
+    try {
+      const ok = await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+      if (!ok) showToast('Could not save — please try again');
+    } catch (e) {
+      showToast('Could not save — please try again');
+    }
+  }
+
+  function totals() {
+    const totalPaid = state.payments.reduce((sum, p) => sum + p.amount, 0);
+    const remaining = state.totalLoan - totalPaid;
+    const percent = state.totalLoan > 0 ? Math.min(100, (totalPaid / state.totalLoan) * 100) : 0;
+    return { totalPaid, remaining, percent };
+  }
+
+  function render() {
+    const { totalPaid, remaining, percent } = totals();
+
+    document.getElementById('statementDate').textContent = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    document.getElementById('balanceDisplay').textContent = formatMoney(remaining);
+    document.getElementById('statLoan').textContent = formatMoney(state.totalLoan);
+    document.getElementById('statPaid').textContent = formatMoney(totalPaid);
+    document.getElementById('progressFill').style.width = percent.toFixed(1) + '%';
+    document.getElementById('statPercent').textContent = percent.toFixed(2) + '% paid';
+    document.getElementById('statCount').textContent = state.payments.length +
+      (state.payments.length === 1 ? ' payment' : ' payments');
+
+    const body = document.getElementById('historyBody');
+    const sorted = [...state.payments].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (sorted.length === 0) {
+      body.innerHTML = '<tr><td colspan="3"><div class="empty-state">No payments recorded yet.</div></td></tr>';
+      return;
     }
 
-    // Formats the date to look nice (e.g. Sep 10, 2026, 2:30 PM)
-    function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(dateString).toLocaleDateString('en-US', options);
+    body.innerHTML = sorted.map(p => `
+      <tr>
+        <td>
+          <div class="ledger-date">${formatDate(p.date)}</div>
+          ${p.note ? `<div class="ledger-note">${escapeHtml(p.note)}</div>` : ''}
+        </td>
+        <td class="ledger-amount">${formatMoney(p.amount)}</td>
+        <td><button class="ledger-delete" onclick="deletePayment('${p.id}')" title="Delete entry">✕</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function submitPayment() {
+    const amountInput = document.getElementById('amount');
+    const noteInput = document.getElementById('note');
+    const amount = parseFloat(amountInput.value);
+
+    if (isNaN(amount) || amount <= 0) {
+      return alert('Please enter a valid payment amount.');
     }
 
-    function updateUI() {
-        const list = document.getElementById('historyList');
-        list.innerHTML = '';
-        
-        let totalPaid = 0;
-        
-        // Sort newest payments to the top
-        const sortedPayments = [...payments].sort((a, b) => new Date(b.date) - new Date(a.date));
+    state.payments.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      amount,
+      note: noteInput.value.trim(),
+      date: new Date().toISOString()
+    });
 
-        if (sortedPayments.length === 0) {
-            list.innerHTML = '<li style="color: #6b7280; text-align: center; padding: 10px 0;">No payments recorded yet.</li>';
-        }
+    amountInput.value = '';
+    noteInput.value = '';
+    render();
+    await persistState();
+    showToast('Payment recorded');
+  }
 
-        sortedPayments.forEach(p => {
-            totalPaid += p.amount;
-            
-            let noteHTML = '';
-            if (p.note && p.note.trim() !== "") {
-                noteHTML = `<div class="history-note">📝 ${p.note}</div>`;
-            }
+  async function deletePayment(id) {
+    if (!confirm('Delete this payment entry? This cannot be undone.')) return;
+    state.payments = state.payments.filter(p => p.id !== id);
+    render();
+    await persistState();
+    showToast('Entry deleted');
+  }
 
-            list.innerHTML += `
-                <li class="history-item">
-                    <div class="history-main">
-                        <span class="history-date">${formatDate(p.date)}</span>
-                        <span class="history-amount">- ${formatMoney(p.amount)}</span>
-                    </div>
-                    ${noteHTML}
-                </li>
-            `;
-        });
+  function toggleSettings() {
+    const panel = document.getElementById('settingsPanel');
+    document.getElementById('settingsTotalLoan').value = state.totalLoan;
+    document.getElementById('settingsCurrency').value = state.currency;
+    panel.classList.toggle('open');
+  }
 
-        // Calculate and display remaining balance
-        const remaining = TOTAL_LOAN - totalPaid;
-        document.getElementById('balanceDisplay').innerText = formatMoney(remaining);
+  async function saveSettings() {
+    const newTotal = parseFloat(document.getElementById('settingsTotalLoan').value);
+    if (isNaN(newTotal) || newTotal <= 0) {
+      return alert('Please enter a valid loan amount.');
+    }
+    state.totalLoan = newTotal;
+    state.currency = document.getElementById('settingsCurrency').value.trim();
+    document.getElementById('settingsPanel').classList.remove('open');
+    render();
+    await persistState();
+    showToast('Loan details updated');
+  }
+
+  function exportExcel() {
+    if (typeof XLSX === 'undefined') {
+      return alert('Excel library failed to load — check your connection and try again.');
     }
 
-    function savePayment() {
-        const amount = parseFloat(document.getElementById('amount').value);
-        const note = document.getElementById('note').value;
-        
-        if(isNaN(amount) || amount <= 0) {
-            return alert('Please enter a valid payment amount.');
-        }
+    const { totalPaid, remaining, percent } = totals();
 
-        // Automatically captures the current date and time
-        const currentDate = new Date().toISOString();
+    const summaryRows = [
+      ['Loan Statement — Summary'],
+      [],
+      ['Original Principal', state.totalLoan],
+      ['Total Paid', totalPaid],
+      ['Outstanding Balance', remaining],
+      ['Percent Paid', percent.toFixed(2) + '%'],
+      ['Number of Payments', state.payments.length],
+      ['Statement Generated', new Date().toLocaleString()]
+    ];
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+    summarySheet['!cols'] = [{ wch: 24 }, { wch: 22 }];
 
-        // Save the payment
-        payments.push({ 
-            amount: amount, 
-            note: note, 
-            date: currentDate 
-        });
-        
-        // Save back to phone's local storage
-        localStorage.setItem('myLoanData', JSON.stringify(payments));
-        
-        // Clear the input fields and refresh the screen
-        document.getElementById('amount').value = '';
-        document.getElementById('note').value = '';
-        updateUI();
-    }
+    const sortedAsc = [...state.payments].sort((a, b) => new Date(a.date) - new Date(b.date));
+    let running = state.totalLoan;
+    const historyRows = [['#', 'Date', 'Time', 'Amount Paid', 'Reference / Note', 'Outstanding Balance']];
+    sortedAsc.forEach((p, i) => {
+      running -= p.amount;
+      const d = new Date(p.date);
+      historyRows.push([
+        i + 1,
+        d.toLocaleDateString('en-US'),
+        d.toLocaleTimeString('en-US'),
+        p.amount,
+        p.note || '',
+        running
+      ]);
+    });
+    const historySheet = XLSX.utils.aoa_to_sheet(historyRows);
+    historySheet['!cols'] = [{ wch: 5 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 32 }, { wch: 18 }];
 
-    function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payments));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "loan_backup.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, summarySheet, 'Summary');
+    XLSX.utils.book_append_sheet(wb, historySheet, 'Payment History');
 
-    // Run when the app first opens
-    updateUI();
+    const filename = `loan-statement-${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(wb, filename);
+    showToast('Statement downloaded');
+  }
+
+  async function init() {
+    state = await loadState();
+    render();
+  }
+
+  init();
 </script>
 </body>
 </html>
