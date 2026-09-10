@@ -2,572 +2,1299 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Loan Statement</title>
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta
+  name="apple-mobile-web-app-capable"
+  content="yes"
+>
+
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent"
+>
+
+<title>Personal Finance Planner</title>
 
 <style>
-  :root {
-    --paper: #FAFAF8;
-    --surface: #FFFFFF;
-    --rule: #D7DADE;
-    --rule-strong: #1F2733;
-    --ink: #191D24;
-    --ink-soft: #565D68;
-    --ink-faint: #8A909B;
-    --accent: #6B1F2A;
-    --font-serif: Georgia, "Times New Roman", Times, serif;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
-  }
 
-  * {
-    box-sizing: border-box;
-  }
+:root {
+  --paper: #FAFAF8;
+  --surface: #FFFFFF;
+  --rule: #D7DADE;
+  --rule-strong: #1F2733;
+  --ink: #191D24;
+  --ink-soft: #565D68;
+  --ink-faint: #8A909B;
+  --accent: #6B1F2A;
+  --positive: #315C43;
+  --warning: #8A5A00;
 
-  body {
-    font-family: var(--font-sans);
-    background-color: var(--paper);
-    margin: 0;
-    padding: 0;
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-  }
+  --font-serif:
+    Georgia,
+    "Times New Roman",
+    Times,
+    serif;
 
-  .sheet {
-    max-width: 560px;
-    margin: 0 auto;
-    background: var(--surface);
-    min-height: 100vh;
-  }
+  --font-sans:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 
-  /* ---------- Masthead ---------- */
+  --font-mono:
+    "SF Mono",
+    "Cascadia Code",
+    "Roboto Mono",
+    Consolas,
+    monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheet {
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--surface);
+  min-height: 100vh;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.masthead {
+  padding: 28px 24px 18px;
+  border-bottom: 2px solid var(--rule-strong);
+}
+
+.masthead-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.masthead-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.masthead-sub {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+.masthead-date {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  text-align: right;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   TABS
+   ============================================================ */
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule-strong);
+  background: var(--surface);
+}
+
+.tab-button {
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 15px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+.section {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 14px;
+}
+
+
+/* ============================================================
+   SUMMARY
+   ============================================================ */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 16px;
+  column-gap: 20px;
+}
+
+.summary-item.full {
+  grid-column: 1 / -1;
+}
+
+.summary-figure {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-item.full .summary-figure {
+  font-size: 1.9rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.summary-caption {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+
+
+/* ============================================================
+   FINANCIAL SUMMARY CARDS
+   ============================================================ */
+
+.money-card {
+  border: 1px solid var(--rule);
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.money-card:last-child {
+  margin-bottom: 0;
+}
+
+.money-card-label {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-bottom: 5px;
+}
+
+.money-card-value {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.money-card-value.large {
+  font-size: 1.65rem;
+}
+
+.money-card-value.positive {
+  color: var(--positive);
+}
+
+.money-card-value.warning {
+  color: var(--warning);
+}
+
+.money-card-value.accent {
+  color: var(--accent);
+}
+
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+
+.progress-rule {
+  margin-top: 18px;
+  height: 3px;
+  background: var(--rule);
+  position: relative;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--rule-strong);
+  transition: width 0.25s ease;
+}
+
+.progress-caption {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-top: 7px;
+  font-family: var(--font-mono);
+}
+
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 2px;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  font-size: 16px;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  border-radius: 0;
+}
+
+select {
+  padding-left: 0;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+button.primary {
+  width: 100%;
+  padding: 13px;
+  background-color: var(--rule-strong);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+button.primary:active {
+  background-color: var(--ink);
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-row button {
+  flex: 1;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 13px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+button.export,
+button.backup {
+  width: 100%;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: 13px;
+  font-size: 0.85rem;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+button.backup {
+  color: var(--ink-soft);
+  border-color: var(--rule);
+}
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+.settings-panel {
+  display: none;
+}
+
+.settings-panel.open {
+  display: block;
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+table.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+table.ledger thead th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+table.ledger thead th.num {
+  text-align: right;
+}
+
+table.ledger tbody td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+table.ledger tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ledger-date {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.ledger-note {
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  margin-top: 3px;
+}
+
+.ledger-amount {
+  font-family: var(--font-mono);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.ledger-delete {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0 0 0 10px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+  padding: 20px 0;
+}
+
+
+/* ============================================================
+   EXPENSE LIST
+   ============================================================ */
+
+.expense-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.expense-item:last-child {
+  border-bottom: none;
+}
+
+.expense-name {
+  font-size: 0.85rem;
+}
+
+.expense-category {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.expense-amount {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.delete-expense {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 5px;
+}
+
+
+/* ============================================================
+   SAVINGS GOAL
+   ============================================================ */
+
+.goal-box {
+  border: 1px solid var(--rule);
+  padding: 16px;
+}
+
+.goal-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.goal-progress {
+  margin-top: 14px;
+}
+
+.goal-progress-bar {
+  height: 4px;
+  background: var(--rule);
+  position: relative;
+}
+
+.goal-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--positive);
+}
+
+.goal-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+}
+
+
+/* ============================================================
+   STORAGE / FOOTER
+   ============================================================ */
+
+.storage-status {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  padding: 8px 24px 0;
+}
+
+.footnote {
+  padding: 18px 24px 26px;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  line-height: 1.6;
+}
+
+.file-input {
+  display: none;
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--rule-strong);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 420px) {
 
   .masthead {
-    padding: 28px 24px 18px;
-    border-bottom: 2px solid var(--rule-strong);
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
-  .masthead-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+  .section {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .expense-item {
+    grid-template-columns: 1fr auto auto;
   }
 
   .masthead-title {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    letter-spacing: 0.3px;
-    margin: 0;
+    font-size: 1.35rem;
   }
 
-  .masthead-sub {
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-    margin-top: 4px;
-  }
+}
 
-  .masthead-date {
-    font-size: 0.75rem;
-    color: var(--ink-faint);
-    text-align: right;
-    line-height: 1.5;
-    white-space: nowrap;
-  }
-
-  .edit-link {
-    background: none;
-    border: none;
-    color: var(--ink-soft);
-    font-size: 0.75rem;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    margin-top: 6px;
-  }
-
-  /* ---------- Sections ---------- */
-
-  .section {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .section-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin: 0 0 14px;
-  }
-
-  /* ---------- Summary ---------- */
-
-  .summary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 14px;
-  }
-
-  .summary-item.full {
-    grid-column: 1 / -1;
-  }
-
-  .summary-figure {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .summary-item.full .summary-figure {
-    font-size: 1.9rem;
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .summary-caption {
-    font-size: 0.74rem;
-    color: var(--ink-soft);
-    margin-top: 2px;
-  }
-
-  .progress-rule {
-    margin-top: 16px;
-    height: 2px;
-    background: var(--rule);
-    position: relative;
-  }
-
-  .progress-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: var(--rule-strong);
-  }
-
-  .progress-caption {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    color: var(--ink-faint);
-    margin-top: 6px;
-    font-family: var(--font-mono);
-  }
-
-  /* ---------- Settings ---------- */
-
-  .settings-panel {
-    display: none;
-  }
-
-  .settings-panel.open {
-    display: block;
-  }
-
-  /* ---------- Forms ---------- */
-
-  .field {
-    margin-bottom: 16px;
-  }
-
-  .field-label {
-    display: block;
-    font-size: 0.74rem;
-    color: var(--ink-soft);
-    margin-bottom: 6px;
-  }
-
-  input {
-    width: 100%;
-    padding: 9px 2px;
-    border: none;
-    border-bottom: 1px solid var(--rule);
-    background: transparent;
-    font-size: 16px;
-    font-family: var(--font-sans);
-    color: var(--ink);
-    border-radius: 0;
-  }
-
-  input:focus {
-    outline: none;
-    border-bottom: 1px solid var(--rule-strong);
-  }
-
-  button.primary {
-    width: 100%;
-    padding: 13px;
-    background-color: var(--rule-strong);
-    color: #fff;
-    border: none;
-    border-radius: 2px;
-    font-size: 0.85rem;
-    letter-spacing: 0.4px;
-    cursor: pointer;
-    margin-top: 4px;
-  }
-
-  button.primary:active {
-    background-color: var(--ink);
-  }
-
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-  }
-
-  .btn-row button {
-    flex: 1;
-  }
-
-  button.secondary {
-    background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    padding: 13px;
-    font-size: 0.85rem;
-    cursor: pointer;
-  }
-
-  button.export {
-    width: 100%;
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--rule-strong);
-    border-radius: 2px;
-    padding: 13px;
-    font-size: 0.85rem;
-    letter-spacing: 0.4px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-
-  button.backup {
-    width: 100%;
-    background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    padding: 13px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-
-  /* ---------- Transaction table ---------- */
-
-  table.ledger {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
-  }
-
-  table.ledger thead th {
-    text-align: left;
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--rule-strong);
-  }
-
-  table.ledger thead th.num {
-    text-align: right;
-  }
-
-  table.ledger tbody td {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-  }
-
-  table.ledger tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  .ledger-date {
-    color: var(--ink-soft);
-    font-size: 0.8rem;
-    white-space: nowrap;
-  }
-
-  .ledger-note {
-    font-size: 0.76rem;
-    color: var(--ink-faint);
-    margin-top: 2px;
-  }
-
-  .ledger-amount {
-    font-family: var(--font-mono);
-    text-align: right;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ledger-delete {
-    background: none;
-    border: none;
-    color: var(--ink-faint);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0 0 0 10px;
-    vertical-align: top;
-  }
-
-  .empty-state {
-    text-align: center;
-    color: var(--ink-faint);
-    font-size: 0.82rem;
-    padding: 20px 0;
-  }
-
-  .footnote {
-    padding: 18px 24px 26px;
-    font-size: 0.72rem;
-    color: var(--ink-faint);
-    line-height: 1.6;
-  }
-
-  .toast {
-    position: fixed;
-    left: 50%;
-    bottom: 24px;
-    transform: translateX(-50%) translateY(16px);
-    background: var(--rule-strong);
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 2px;
-    font-size: 0.8rem;
-    opacity: 0;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    pointer-events: none;
-    z-index: 50;
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .storage-status {
-    text-align: center;
-    font-size: 0.7rem;
-    color: var(--ink-faint);
-    padding: 4px 24px 0;
-  }
-
-  .file-input {
-    display: none;
-  }
 </style>
 </head>
+
 
 <body>
 
 <div class="sheet">
 
-  <!-- Masthead -->
 
-  <div class="masthead">
-    <div class="masthead-row">
+<!-- ==========================================================
+     HEADER
+     =========================================================== -->
 
-      <div>
-        <h1 class="masthead-title">Loan Statement</h1>
-        <div class="masthead-sub">
-          Personal loan tracking record
-        </div>
+<div class="masthead">
+
+  <div class="masthead-row">
+
+    <div>
+
+      <h1 class="masthead-title">
+        Personal Finance
+      </h1>
+
+      <div class="masthead-sub">
+        Loan & financial planning
       </div>
 
-      <div class="masthead-date">
-        <div id="statementDate">—</div>
-
-        <button class="edit-link" onclick="toggleSettings()">
-          Edit loan details
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- Settings -->
-
-  <div class="section settings-panel" id="settingsPanel">
-
-    <p class="section-label">Loan details</p>
-
-    <div class="field">
-      <label class="field-label">
-        Original principal
-      </label>
-
-      <input
-        type="number"
-        id="settingsTotalLoan"
-        inputmode="decimal"
-      >
     </div>
 
-    <div class="field">
-      <label class="field-label">
-        Currency symbol (optional)
-      </label>
-
-      <input
-        type="text"
-        id="settingsCurrency"
-        placeholder="e.g. Rs, $, ₹"
-      >
-    </div>
-
-    <div class="btn-row">
-
-      <button
-        class="secondary"
-        onclick="toggleSettings()"
-      >
-        Cancel
-      </button>
-
-      <button
-        class="primary"
-        onclick="saveSettings()"
-      >
-        Save
-      </button>
-
+    <div class="masthead-date">
+      <div id="statementDate">—</div>
     </div>
 
   </div>
 
-
-  <!-- Summary -->
-
-  <div class="section">
-
-    <p class="section-label">
-      Account summary
-    </p>
-
-    <div class="summary-grid">
-
-      <div class="summary-item">
-
-        <div
-          class="summary-figure"
-          id="statLoan"
-        >
-          —
-        </div>
-
-        <div class="summary-caption">
-          Original principal
-        </div>
-
-      </div>
+</div>
 
 
-      <div class="summary-item">
+<!-- ==========================================================
+     TABS
+     =========================================================== -->
 
-        <div
-          class="summary-figure"
-          id="statPaid"
-        >
-          —
-        </div>
+<div class="tabs">
 
-        <div class="summary-caption">
-          Paid to date
-        </div>
+  <button
+    class="tab-button active"
+    id="loanTabButton"
+    onclick="switchTab('loan')"
+  >
+    Loan Planning
+  </button>
 
-      </div>
+  <button
+    class="tab-button"
+    id="financeTabButton"
+    onclick="switchTab('finance')"
+  >
+    Financial Planning
+  </button>
 
-
-      <div class="summary-item full">
-
-        <div
-          class="summary-figure"
-          id="balanceDisplay"
-        >
-          —
-        </div>
-
-        <div class="summary-caption">
-          Outstanding balance
-        </div>
-
-      </div>
-
-    </div>
+</div>
 
 
-    <div class="progress-rule">
+<!-- ==========================================================
+     LOAN TAB
+     =========================================================== -->
+
+<div
+  id="loanTab"
+  class="tab-content active"
+>
+
+
+<!-- Loan settings -->
+
+<div
+  class="section settings-panel"
+  id="settingsPanel"
+>
+
+  <p class="section-label">
+    Loan details
+  </p>
+
+  <div class="field">
+
+    <label class="field-label">
+      Original principal
+    </label>
+
+    <input
+      type="number"
+      id="settingsTotalLoan"
+      inputmode="decimal"
+    >
+
+  </div>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Currency symbol
+    </label>
+
+    <input
+      type="text"
+      id="settingsCurrency"
+      placeholder="e.g. Rs, $, ₹"
+    >
+
+  </div>
+
+
+  <div class="btn-row">
+
+    <button
+      class="secondary"
+      onclick="toggleSettings()"
+    >
+      Cancel
+    </button>
+
+    <button
+      class="primary"
+      onclick="saveSettings()"
+    >
+      Save
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- Loan summary -->
+
+<div class="section">
+
+  <p class="section-label">
+    Loan summary
+  </p>
+
+  <div class="summary-grid">
+
+    <div class="summary-item">
 
       <div
-        class="progress-fill"
-        id="progressFill"
-        style="width:0%"
-      ></div>
+        class="summary-figure"
+        id="statLoan"
+      >
+        —
+      </div>
+
+      <div class="summary-caption">
+        Original principal
+      </div>
 
     </div>
 
 
-    <div class="progress-caption">
+    <div class="summary-item">
 
-      <span id="statPercent">
-        0.00% paid
-      </span>
+      <div
+        class="summary-figure"
+        id="statPaid"
+      >
+        —
+      </div>
 
-      <span id="statCount">
-        0 payments
-      </span>
+      <div class="summary-caption">
+        Paid to date
+      </div>
+
+    </div>
+
+
+    <div class="summary-item full">
+
+      <div
+        class="summary-figure"
+        id="balanceDisplay"
+      >
+        —
+      </div>
+
+      <div class="summary-caption">
+        Outstanding balance
+      </div>
 
     </div>
 
   </div>
 
 
-  <!-- Record payment -->
+  <div class="progress-rule">
 
-  <div class="section">
+    <div
+      class="progress-fill"
+      id="progressFill"
+      style="width:0%"
+    ></div>
 
-    <p class="section-label">
-      Record a payment
-    </p>
+  </div>
 
-    <div class="field">
 
-      <label class="field-label">
-        Amount
-      </label>
+  <div class="progress-caption">
 
-      <input
-        type="number"
-        id="amount"
-        placeholder="0.00"
-        inputmode="decimal"
-      >
+    <span id="statPercent">
+      0.00% paid
+    </span>
 
+    <span id="statCount">
+      0 payments
+    </span>
+
+  </div>
+
+</div>
+
+
+<!-- Loan edit -->
+
+<div class="section">
+
+  <button
+    class="secondary"
+    style="width:100%;"
+    onclick="toggleSettings()"
+  >
+    Edit loan details
+  </button>
+
+</div>
+
+
+<!-- Record payment -->
+
+<div class="section">
+
+  <p class="section-label">
+    Record a payment
+  </p>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Amount
+    </label>
+
+    <input
+      type="number"
+      id="amount"
+      placeholder="0.00"
+      inputmode="decimal"
+    >
+
+  </div>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Reference / note
+    </label>
+
+    <input
+      type="text"
+      id="note"
+      placeholder="e.g. Monthly payment"
+    >
+
+  </div>
+
+
+  <button
+    class="primary"
+    onclick="submitPayment()"
+  >
+    Record payment
+  </button>
+
+</div>
+
+
+<!-- Payment history -->
+
+<div class="section">
+
+  <p class="section-label">
+    Payment history
+  </p>
+
+  <table class="ledger">
+
+    <thead>
+
+      <tr>
+
+        <th>
+          Date
+        </th>
+
+        <th class="num">
+          Amount
+        </th>
+
+        <th></th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="historyBody">
+
+      <tr>
+
+        <td colspan="3">
+
+          <div class="empty-state">
+            Loading…
+          </div>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+
+<!-- Loan export -->
+
+<div class="section">
+
+  <button
+    class="export"
+    onclick="exportExcel()"
+  >
+    Download statement (Excel)
+  </button>
+
+</div>
+
+</div>
+
+
+<!-- ==========================================================
+     FINANCIAL PLANNING TAB
+     =========================================================== -->
+
+<div
+  id="financeTab"
+  class="tab-content"
+>
+
+
+<!-- Monthly income -->
+
+<div class="section">
+
+  <p class="section-label">
+    Monthly income
+  </p>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Monthly salary / income
+    </label>
+
+    <input
+      type="number"
+      id="salaryInput"
+      placeholder="e.g. 400000"
+      inputmode="decimal"
+    >
+
+  </div>
+
+
+  <button
+    class="primary"
+    onclick="saveSalary()"
+  >
+    Save monthly income
+  </button>
+
+</div>
+
+
+<!-- Financial overview -->
+
+<div class="section">
+
+  <p class="section-label">
+    Monthly financial overview
+  </p>
+
+
+  <div class="money-card">
+
+    <div class="money-card-label">
+      Monthly income
+    </div>
+
+    <div
+      class="money-card-value"
+      id="financeSalary"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="money-card">
+
+    <div class="money-card-label">
+      Total planned expenses
+    </div>
+
+    <div
+      class="money-card-value"
+      id="financeExpenses"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="money-card">
+
+    <div class="money-card-label">
+      Planned savings
+    </div>
+
+    <div
+      class="money-card-value positive"
+      id="financeSavings"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="money-card">
+
+    <div class="money-card-label">
+      Remaining / unallocated
+    </div>
+
+    <div
+      class="money-card-value"
+      id="financeRemaining"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="progress-rule">
+
+    <div
+      class="progress-fill"
+      id="financeProgress"
+      style="width:0%"
+    ></div>
+
+  </div>
+
+
+  <div class="progress-caption">
+
+    <span id="expensePercentage">
+      0% allocated
+    </span>
+
+    <span id="savingsPercentage">
+      0% savings
+    </span>
+
+  </div>
+
+</div>
+
+
+<!-- Add expense -->
+
+<div class="section">
+
+  <p class="section-label">
+    Monthly expenses
+  </p>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Expense name
+    </label>
+
+    <input
+      type="text"
+      id="expenseName"
+      placeholder="e.g. Rent"
+    >
+
+  </div>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Category
+    </label>
+
+    <select id="expenseCategory">
+
+      <option value="Housing">
+        Housing
+      </option>
+
+      <option value="Food">
+        Food
+      </option>
+
+      <option value="Transport">
+        Transport
+      </option>
+
+      <option value="Utilities">
+        Utilities
+      </option>
+
+      <option value="Loan">
+        Loan
+      </option>
+
+      <option value="Insurance">
+        Insurance
+      </option>
+
+      <option value="Family">
+        Family
+      </option>
+
+      <option value="Health">
+        Health
+      </option>
+
+      <option value="Entertainment">
+        Entertainment
+      </option>
+
+      <option value="Shopping">
+        Shopping
+      </option>
+
+      <option value="Education">
+        Education
+      </option>
+
+      <option value="Other">
+        Other
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="field">
+
+    <label class="field-label">
+      Monthly amount
+    </label>
+
+    <input
+      type="number"
+      id="expenseAmount"
+      placeholder="0.00"
+      inputmode="decimal"
+    >
+
+  </div>
+
+
+  <button
+    class="primary"
+    onclick="addExpense()"
+  >
+    Add expense
+  </button>
+
+</div>
+
+
+<!-- Expense list -->
+
+<div class="section">
+
+  <p class="section-label">
+    Expense plan
+  </p>
+
+
+  <div id="expenseList">
+
+    <div class="empty-state">
+      No expenses added yet.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Savings planning -->
+
+<div class="section">
+
+  <p class="section-label">
+    Savings planning
+  </p>
+
+
+  <div class="goal-box">
+
+    <div class="goal-title">
+      Monthly savings target
     </div>
 
 
     <div class="field">
 
       <label class="field-label">
-        Reference / note (optional)
+        Target amount
       </label>
 
       <input
-        type="text"
-        id="note"
-        placeholder="e.g. Monthly payment"
+        type="number"
+        id="savingsTargetInput"
+        placeholder="e.g. 100000"
+        inputmode="decimal"
       >
 
     </div>
@@ -575,112 +1302,115 @@
 
     <button
       class="primary"
-      onclick="submitPayment()"
+      onclick="saveSavingsTarget()"
     >
-      Record payment
+      Save savings target
     </button>
 
-  </div>
+
+    <div class="goal-progress">
+
+      <div class="goal-progress-bar">
+
+        <div
+          class="goal-progress-fill"
+          id="goalProgressFill"
+          style="width:0%"
+        ></div>
+
+      </div>
 
 
-  <!-- Transaction history -->
+      <div class="goal-meta">
 
-  <div class="section">
+        <span id="goalSavedText">
+          Planned: 0
+        </span>
 
-    <p class="section-label">
-      Transaction history
-    </p>
+        <span id="goalTargetText">
+          Target: 0
+        </span>
 
-    <table class="ledger">
+      </div>
 
-      <thead>
-
-        <tr>
-
-          <th>
-            Date
-          </th>
-
-          <th class="num">
-            Amount
-          </th>
-
-          <th></th>
-
-        </tr>
-
-      </thead>
-
-      <tbody id="historyBody">
-
-        <tr>
-          <td colspan="3">
-
-            <div class="empty-state">
-              Loading…
-            </div>
-
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
+    </div>
 
   </div>
 
+</div>
 
-  <!-- Backup / Export -->
 
-  <div
-    class="section"
-    style="border-bottom:none;"
+<!-- Financial advice -->
+
+<div class="section">
+
+  <p class="section-label">
+    Financial position
+  </p>
+
+
+  <div id="financialMessage">
+
+    Add your salary and expenses to see your
+    monthly financial position.
+
+  </div>
+
+</div>
+
+
+<!-- Backup -->
+
+<div class="section">
+
+  <button
+    class="backup"
+    onclick="backupData()"
+  >
+    Backup all financial data
+  </button>
+
+
+  <button
+    class="backup"
+    onclick="document.getElementById('restoreFile').click()"
+  >
+    Restore financial data
+  </button>
+
+
+  <input
+    type="file"
+    id="restoreFile"
+    class="file-input"
+    accept=".json,application/json"
+    onchange="restoreData(event)"
   >
 
-    <button
-      class="export"
-      onclick="exportExcel()"
-    >
-      Download statement (Excel)
-    </button>
-
-    <button
-      class="backup"
-      onclick="backupData()"
-    >
-      Backup loan data
-    </button>
-
-    <button
-      class="backup"
-      onclick="document.getElementById('restoreFile').click()"
-    >
-      Restore loan data
-    </button>
-
-    <input
-      type="file"
-      id="restoreFile"
-      class="file-input"
-      accept=".json,application/json"
-      onchange="restoreData(event)"
-    >
-
-  </div>
+</div>
 
 
-  <div class="storage-status">
-    Data is stored locally on this iPhone.
-  </div>
+</div>
 
 
-  <p class="footnote">
+<!-- ==========================================================
+     FOOTER
+     =========================================================== -->
 
-    Your loan and payment records are stored locally in this
-    browser on this device. Use "Backup loan data" periodically
-    to keep an independent copy of your records.
+<div class="storage-status">
+  Data is stored locally on this iPhone.
+</div>
 
-  </p>
+
+<p class="footnote">
+
+  Your loan, salary, expense and savings records are stored
+  locally in this browser on this device. Use
+  "Backup all financial data" periodically to keep an
+  independent copy of your records.
+
+</p>
+
 
 </div>
 
@@ -703,60 +1433,95 @@
    ============================================================ */
 
 const DB_NAME = 'LoanTrackerDB';
-const DB_VERSION = 1;
+
+const DB_VERSION = 2;
+
 const STORE_NAME = 'loanData';
 
+
 const DEFAULT_STATE = {
+
   totalLoan: 4550000,
+
   currency: '',
-  payments: []
+
+  payments: [],
+
+  financial: {
+
+    salary: 0,
+
+    expenses: [],
+
+    savingsTarget: 0
+
+  }
+
 };
 
+
 let state = null;
+
 let db = null;
 
 
 /* ============================================================
-   OPEN INDEXEDDB
+   DATABASE
    ============================================================ */
 
 function openDatabase() {
 
   return new Promise((resolve, reject) => {
 
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const request =
+      indexedDB.open(
+        DB_NAME,
+        DB_VERSION
+      );
 
 
-    request.onupgradeneeded = function(event) {
+    request.onupgradeneeded =
+      function(event) {
 
-      const database = event.target.result;
-
-      if (!database.objectStoreNames.contains(STORE_NAME)) {
-
-        database.createObjectStore(
-          STORE_NAME,
-          { keyPath: 'id' }
-        );
-
-      }
-
-    };
+        const database =
+          event.target.result;
 
 
-    request.onsuccess = function(event) {
+        if (
+          !database.objectStoreNames.contains(
+            STORE_NAME
+          )
+        ) {
 
-      db = event.target.result;
+          database.createObjectStore(
+            STORE_NAME,
+            {
+              keyPath: 'id'
+            }
+          );
 
-      resolve(db);
+        }
 
-    };
+      };
 
 
-    request.onerror = function() {
+    request.onsuccess =
+      function(event) {
 
-      reject(request.error);
+        db =
+          event.target.result;
 
-    };
+        resolve(db);
+
+      };
+
+
+    request.onerror =
+      function() {
+
+        reject(request.error);
+
+      };
 
   });
 
@@ -764,118 +1529,196 @@ function openDatabase() {
 
 
 /* ============================================================
-   SAVE DATA TO INDEXEDDB
+   SAVE
    ============================================================ */
 
 function saveToDatabase(data) {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    if (!db) {
+      if (!db) {
 
-      reject(new Error('Database not initialized'));
+        reject(
+          new Error(
+            'Database not initialized'
+          )
+        );
 
-      return;
+        return;
+
+      }
+
+
+      const transaction =
+        db.transaction(
+          STORE_NAME,
+          'readwrite'
+        );
+
+
+      const store =
+        transaction.objectStore(
+          STORE_NAME
+        );
+
+
+      const request =
+        store.put({
+
+          id: 'main',
+
+          data: data
+
+        });
+
+
+      request.onsuccess =
+        function() {
+
+          resolve();
+
+        };
+
+
+      request.onerror =
+        function() {
+
+          reject(request.error);
+
+        };
 
     }
-
-
-    const transaction =
-      db.transaction(
-        STORE_NAME,
-        'readwrite'
-      );
-
-
-    const store =
-      transaction.objectStore(STORE_NAME);
-
-
-    const request =
-      store.put({
-        id: 'main',
-        data: data
-      });
-
-
-    request.onsuccess = function() {
-
-      resolve();
-
-    };
-
-
-    request.onerror = function() {
-
-      reject(request.error);
-
-    };
-
-  });
+  );
 
 }
 
 
 /* ============================================================
-   LOAD DATA FROM INDEXEDDB
+   LOAD
    ============================================================ */
 
 function loadFromDatabase() {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    if (!db) {
+      if (!db) {
 
-      reject(new Error('Database not initialized'));
+        reject(
+          new Error(
+            'Database not initialized'
+          )
+        );
 
-      return;
-
-    }
-
-
-    const transaction =
-      db.transaction(
-        STORE_NAME,
-        'readonly'
-      );
-
-
-    const store =
-      transaction.objectStore(STORE_NAME);
-
-
-    const request =
-      store.get('main');
-
-
-    request.onsuccess = function() {
-
-      if (request.result) {
-
-        resolve(request.result.data);
-
-      } else {
-
-        resolve(null);
+        return;
 
       }
 
-    };
+
+      const transaction =
+        db.transaction(
+          STORE_NAME,
+          'readonly'
+        );
 
 
-    request.onerror = function() {
+      const store =
+        transaction.objectStore(
+          STORE_NAME
+        );
 
-      reject(request.error);
 
-    };
+      const request =
+        store.get('main');
 
-  });
+
+      request.onsuccess =
+        function() {
+
+          if (request.result) {
+
+            resolve(
+              request.result.data
+            );
+
+          } else {
+
+            resolve(null);
+
+          }
+
+        };
+
+
+      request.onerror =
+        function() {
+
+          reject(request.error);
+
+        };
+
+    }
+  );
 
 }
 
 
 /* ============================================================
-   LOAD APPLICATION STATE
+   NORMALIZE
+   ============================================================ */
+
+function normalizeState(data) {
+
+  const financial =
+    data.financial || {};
+
+
+  return {
+
+    totalLoan:
+      Number(data.totalLoan)
+      || DEFAULT_STATE.totalLoan,
+
+
+    currency:
+      typeof data.currency === 'string'
+        ? data.currency
+        : '',
+
+
+    payments:
+      Array.isArray(data.payments)
+        ? data.payments
+        : [],
+
+
+    financial: {
+
+      salary:
+        Number(financial.salary)
+        || 0,
+
+
+      expenses:
+        Array.isArray(financial.expenses)
+          ? financial.expenses
+          : [],
+
+
+      savingsTarget:
+        Number(financial.savingsTarget)
+        || 0
+
+    }
+
+  };
+
+}
+
+
+/* ============================================================
+   LOAD APPLICATION
    ============================================================ */
 
 async function loadState() {
@@ -884,29 +1727,45 @@ async function loadState() {
 
     await openDatabase();
 
+
     const savedState =
       await loadFromDatabase();
 
 
     if (savedState) {
 
-      return normalizeState(savedState);
+      const normalized =
+        normalizeState(
+          savedState
+        );
+
+
+      /*
+        Save normalized version.
+        This also upgrades old loan-only
+        data to the new financial planner.
+      */
+
+      await saveToDatabase(
+        normalized
+      );
+
+
+      return normalized;
 
     }
 
 
-    /*
-      First time using the new version.
-      We create a fresh state.
-    */
-
-    const initialState = {
-      ...DEFAULT_STATE,
-      payments: []
-    };
+    const initialState =
+      normalizeState(
+        DEFAULT_STATE
+      );
 
 
-    await saveToDatabase(initialState);
+    await saveToDatabase(
+      initialState
+    );
+
 
     return initialState;
 
@@ -919,13 +1778,15 @@ async function loadState() {
       error
     );
 
+
     alert(
       'Could not access local storage on this device.'
     );
 
-    return {
-      ...DEFAULT_STATE
-    };
+
+    return normalizeState(
+      DEFAULT_STATE
+    );
 
   }
 
@@ -933,40 +1794,16 @@ async function loadState() {
 
 
 /* ============================================================
-   NORMALIZE DATA
-   ============================================================ */
-
-function normalizeState(data) {
-
-  return {
-
-    totalLoan:
-      Number(data.totalLoan) || DEFAULT_STATE.totalLoan,
-
-    currency:
-      typeof data.currency === 'string'
-        ? data.currency
-        : '',
-
-    payments:
-      Array.isArray(data.payments)
-        ? data.payments
-        : []
-
-  };
-
-}
-
-
-/* ============================================================
-   PERSIST STATE
+   PERSIST
    ============================================================ */
 
 async function persistState() {
 
   try {
 
-    await saveToDatabase(state);
+    await saveToDatabase(
+      state
+    );
 
     return true;
 
@@ -979,9 +1816,11 @@ async function persistState() {
       error
     );
 
+
     showToast(
       'Could not save data'
     );
+
 
     return false;
 
@@ -994,55 +1833,71 @@ async function persistState() {
    TOAST
    ============================================================ */
 
-function showToast(msg) {
+function showToast(message) {
 
   const toast =
-    document.getElementById('toast');
+    document.getElementById(
+      'toast'
+    );
 
 
-  toast.textContent = msg;
+  toast.textContent =
+    message;
 
-  toast.classList.add('show');
+
+  toast.classList.add(
+    'show'
+  );
 
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    toast.classList.remove('show');
+      toast.classList.remove(
+        'show'
+      );
 
-  }, 2200);
+    },
+    2200
+  );
 
 }
 
 
 /* ============================================================
-   FORMAT MONEY
+   MONEY
    ============================================================ */
 
 function formatMoney(amount) {
 
-  const sym =
-    state && state.currency
+  const symbol =
+    state &&
+    state.currency
       ? state.currency + ' '
       : '';
 
 
-  return sym +
+  return symbol +
     new Intl.NumberFormat(
       'en-US',
       {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }
-    ).format(amount);
+    ).format(
+      Number(amount) || 0
+    );
 
 }
 
 
 /* ============================================================
-   FORMAT DATE
+   DATE
    ============================================================ */
 
-function formatDate(dateString) {
+function formatDate(
+  dateString
+) {
 
   const d =
     new Date(dateString);
@@ -1071,52 +1926,146 @@ function formatDate(dateString) {
 
 
 /* ============================================================
-   CALCULATE TOTALS
+   TAB SWITCH
    ============================================================ */
 
-function totals() {
+function switchTab(tab) {
+
+  const loanTab =
+    document.getElementById(
+      'loanTab'
+    );
+
+
+  const financeTab =
+    document.getElementById(
+      'financeTab'
+    );
+
+
+  const loanButton =
+    document.getElementById(
+      'loanTabButton'
+    );
+
+
+  const financeButton =
+    document.getElementById(
+      'financeTabButton'
+    );
+
+
+  if (tab === 'loan') {
+
+    loanTab.classList.add(
+      'active'
+    );
+
+    financeTab.classList.remove(
+      'active'
+    );
+
+
+    loanButton.classList.add(
+      'active'
+    );
+
+    financeButton.classList.remove(
+      'active'
+    );
+
+  }
+
+  else {
+
+    loanTab.classList.remove(
+      'active'
+    );
+
+    financeTab.classList.add(
+      'active'
+    );
+
+
+    loanButton.classList.remove(
+      'active'
+    );
+
+    financeButton.classList.add(
+      'active'
+    );
+
+
+    renderFinancial();
+
+  }
+
+}
+
+
+/* ============================================================
+   LOAN TOTALS
+   ============================================================ */
+
+function loanTotals() {
 
   const totalPaid =
     state.payments.reduce(
-      (sum, payment) =>
-        sum + Number(payment.amount),
+      (
+        sum,
+        payment
+      ) =>
+        sum +
+        Number(payment.amount),
       0
     );
 
 
   const remaining =
-    state.totalLoan - totalPaid;
+    state.totalLoan -
+    totalPaid;
 
 
   const percent =
     state.totalLoan > 0
       ? Math.min(
           100,
-          (totalPaid / state.totalLoan) * 100
+          (
+            totalPaid /
+            state.totalLoan
+          ) * 100
         )
       : 0;
 
 
   return {
+
     totalPaid,
+
     remaining,
+
     percent
+
   };
 
 }
 
 
 /* ============================================================
-   RENDER UI
+   RENDER LOAN
    ============================================================ */
 
-function render() {
+function renderLoan() {
 
   const {
+
     totalPaid,
+
     remaining,
+
     percent
-  } = totals();
+
+  } = loanTotals();
 
 
   document.getElementById(
@@ -1135,31 +2084,39 @@ function render() {
   document.getElementById(
     'balanceDisplay'
   ).textContent =
-    formatMoney(remaining);
+    formatMoney(
+      remaining
+    );
 
 
   document.getElementById(
     'statLoan'
   ).textContent =
-    formatMoney(state.totalLoan);
+    formatMoney(
+      state.totalLoan
+    );
 
 
   document.getElementById(
     'statPaid'
   ).textContent =
-    formatMoney(totalPaid);
+    formatMoney(
+      totalPaid
+    );
 
 
   document.getElementById(
     'progressFill'
   ).style.width =
-    percent.toFixed(1) + '%';
+    percent.toFixed(1) +
+    '%';
 
 
   document.getElementById(
     'statPercent'
   ).textContent =
-    percent.toFixed(2) + '% paid';
+    percent.toFixed(2) +
+    '% paid';
 
 
   document.getElementById(
@@ -1173,6 +2130,17 @@ function render() {
     );
 
 
+  renderPaymentHistory();
+
+}
+
+
+/* ============================================================
+   PAYMENT HISTORY
+   ============================================================ */
+
+function renderPaymentHistory() {
+
   const body =
     document.getElementById(
       'historyBody'
@@ -1181,22 +2149,35 @@ function render() {
 
   const sorted =
     [...state.payments].sort(
-      (a, b) =>
+      (
+        a,
+        b
+      ) =>
         new Date(b.date) -
         new Date(a.date)
     );
 
 
-  if (sorted.length === 0) {
+  if (
+    sorted.length === 0
+  ) {
 
     body.innerHTML = `
+
       <tr>
+
         <td colspan="3">
+
           <div class="empty-state">
+
             No payments recorded yet.
+
           </div>
+
         </td>
+
       </tr>
+
     `;
 
     return;
@@ -1205,49 +2186,60 @@ function render() {
 
 
   body.innerHTML =
-    sorted.map(payment => `
+    sorted.map(
+      payment => `
 
-      <tr>
+        <tr>
 
-        <td>
+          <td>
 
-          <div class="ledger-date">
-            ${formatDate(payment.date)}
-          </div>
+            <div class="ledger-date">
 
-          ${
-            payment.note
-              ? `
-                <div class="ledger-note">
-                  ${escapeHtml(payment.note)}
-                </div>
-              `
-              : ''
-          }
+              ${formatDate(payment.date)}
 
-        </td>
+            </div>
 
 
-        <td class="ledger-amount">
-          ${formatMoney(payment.amount)}
-        </td>
+            ${
+              payment.note
+                ? `
+
+                  <div class="ledger-note">
+
+                    ${escapeHtml(payment.note)}
+
+                  </div>
+
+                `
+                : ''
+            }
+
+          </td>
 
 
-        <td>
+          <td class="ledger-amount">
 
-          <button
-            class="ledger-delete"
-            onclick="deletePayment('${payment.id}')"
-            title="Delete entry"
-          >
-            ✕
-          </button>
+            ${formatMoney(payment.amount)}
 
-        </td>
+          </td>
 
-      </tr>
 
-    `).join('');
+          <td>
+
+            <button
+              class="ledger-delete"
+              onclick="deletePayment('${payment.id}')"
+            >
+              ✕
+            </button>
+
+          </td>
+
+        </tr>
+
+      `
+    )
+    .join('');
 
 }
 
@@ -1259,10 +2251,13 @@ function render() {
 function escapeHtml(str) {
 
   const div =
-    document.createElement('div');
+    document.createElement(
+      'div'
+    );
 
 
-  div.textContent = str;
+  div.textContent =
+    str;
 
 
   return div.innerHTML;
@@ -1277,15 +2272,21 @@ function escapeHtml(str) {
 async function submitPayment() {
 
   const amountInput =
-    document.getElementById('amount');
+    document.getElementById(
+      'amount'
+    );
 
 
   const noteInput =
-    document.getElementById('note');
+    document.getElementById(
+      'note'
+    );
 
 
   const amount =
-    parseFloat(amountInput.value);
+    parseFloat(
+      amountInput.value
+    );
 
 
   if (
@@ -1302,26 +2303,22 @@ async function submitPayment() {
   }
 
 
-  /*
-    Optional protection:
-    Don't allow payment larger than
-    the remaining balance.
-  */
-
   const {
     remaining
-  } = totals();
+  } = loanTotals();
 
 
-  if (amount > remaining) {
+  if (
+    amount > remaining
+  ) {
 
-    const continuePayment =
+    const confirmed =
       confirm(
         'This payment is larger than the outstanding balance. Continue?'
       );
 
 
-    if (!continuePayment) {
+    if (!confirmed) {
 
       return;
 
@@ -1339,10 +2336,16 @@ async function submitPayment() {
         .toString(36)
         .slice(2, 7),
 
-    amount: amount,
+
+    amount:
+
+
+      amount,
+
 
     note:
       noteInput.value.trim(),
+
 
     date:
       new Date().toISOString()
@@ -1350,13 +2353,10 @@ async function submitPayment() {
   };
 
 
-  state.payments.push(payment);
+  state.payments.push(
+    payment
+  );
 
-
-  /*
-    IMPORTANT:
-    Save BEFORE showing success.
-  */
 
   const saved =
     await persistState();
@@ -1364,16 +2364,14 @@ async function submitPayment() {
 
   if (!saved) {
 
-    /*
-      Remove payment again if saving failed.
-    */
-
     state.payments =
       state.payments.filter(
-        p => p.id !== payment.id
+        p =>
+          p.id !== payment.id
       );
 
-    render();
+
+    renderLoan();
 
     return;
 
@@ -1385,7 +2383,7 @@ async function submitPayment() {
   noteInput.value = '';
 
 
-  render();
+  renderLoan();
 
 
   showToast(
@@ -1401,11 +2399,13 @@ async function submitPayment() {
 
 async function deletePayment(id) {
 
-  if (
-    !confirm(
+  const confirmed =
+    confirm(
       'Delete this payment entry? This cannot be undone.'
-    )
-  ) {
+    );
+
+
+  if (!confirmed) {
 
     return;
 
@@ -1432,24 +2432,26 @@ async function deletePayment(id) {
     state.payments =
       oldPayments;
 
-    render();
+
+    renderLoan();
 
     return;
 
   }
 
 
-  render();
+  renderLoan();
+
 
   showToast(
-    'Entry deleted'
+    'Payment deleted'
   );
 
 }
 
 
 /* ============================================================
-   SETTINGS
+   LOAN SETTINGS
    ============================================================ */
 
 function toggleSettings() {
@@ -1480,7 +2482,7 @@ function toggleSettings() {
 
 
 /* ============================================================
-   SAVE SETTINGS
+   SAVE LOAN SETTINGS
    ============================================================ */
 
 async function saveSettings() {
@@ -1534,8 +2536,10 @@ async function saveSettings() {
     state.totalLoan =
       oldTotal;
 
+
     state.currency =
       oldCurrency;
+
 
     return;
 
@@ -1544,15 +2548,845 @@ async function saveSettings() {
 
   document.getElementById(
     'settingsPanel'
-  ).classList.remove('open');
+  ).classList.remove(
+    'open'
+  );
 
 
-  render();
+  renderLoan();
+
+
+  renderFinancial();
 
 
   showToast(
     'Loan details updated'
   );
+
+}
+
+
+/* ============================================================
+   FINANCIAL TOTALS
+   ============================================================ */
+
+function financialTotals() {
+
+  const salary =
+    Number(
+      state.financial.salary
+    ) || 0;
+
+
+  const expenses =
+    state.financial.expenses.reduce(
+      (
+        sum,
+        expense
+      ) =>
+        sum +
+        Number(expense.amount),
+      0
+    );
+
+
+  const savingsTarget =
+    Number(
+      state.financial.savingsTarget
+    ) || 0;
+
+
+  const remaining =
+    salary -
+    expenses -
+    savingsTarget;
+
+
+  const expensePercentage =
+    salary > 0
+      ? (
+          expenses /
+          salary
+        ) * 100
+      : 0;
+
+
+  const savingsPercentage =
+    salary > 0
+      ? (
+          savingsTarget /
+          salary
+        ) * 100
+      : 0;
+
+
+  return {
+
+    salary,
+
+    expenses,
+
+    savingsTarget,
+
+    remaining,
+
+    expensePercentage,
+
+    savingsPercentage
+
+  };
+
+}
+
+
+/* ============================================================
+   SAVE SALARY
+   ============================================================ */
+
+async function saveSalary() {
+
+  const input =
+    document.getElementById(
+      'salaryInput'
+    );
+
+
+  const salary =
+    parseFloat(
+      input.value
+    );
+
+
+  if (
+    isNaN(salary) ||
+    salary < 0
+  ) {
+
+    alert(
+      'Please enter a valid monthly salary.'
+    );
+
+    return;
+
+  }
+
+
+  const oldSalary =
+    state.financial.salary;
+
+
+  state.financial.salary =
+    salary;
+
+
+  const saved =
+    await persistState();
+
+
+  if (!saved) {
+
+    state.financial.salary =
+      oldSalary;
+
+    return;
+
+  }
+
+
+  renderFinancial();
+
+
+  showToast(
+    'Monthly income saved'
+  );
+
+}
+
+
+/* ============================================================
+   ADD EXPENSE
+   ============================================================ */
+
+async function addExpense() {
+
+  const nameInput =
+    document.getElementById(
+      'expenseName'
+    );
+
+
+  const categoryInput =
+    document.getElementById(
+      'expenseCategory'
+    );
+
+
+  const amountInput =
+    document.getElementById(
+      'expenseAmount'
+    );
+
+
+  const name =
+    nameInput.value.trim();
+
+
+  const category =
+    categoryInput.value;
+
+
+  const amount =
+    parseFloat(
+      amountInput.value
+    );
+
+
+  if (!name) {
+
+    alert(
+      'Please enter an expense name.'
+    );
+
+    return;
+
+  }
+
+
+  if (
+    isNaN(amount) ||
+    amount <= 0
+  ) {
+
+    alert(
+      'Please enter a valid expense amount.'
+    );
+
+    return;
+
+  }
+
+
+  const expense = {
+
+    id:
+      Date.now().toString(36)
+      +
+      Math.random()
+        .toString(36)
+        .slice(2, 7),
+
+
+    name:
+
+
+      name,
+
+
+    category:
+
+
+      category,
+
+
+    amount:
+
+
+      amount
+
+  };
+
+
+  state.financial.expenses.push(
+    expense
+  );
+
+
+  const saved =
+    await persistState();
+
+
+  if (!saved) {
+
+    state.financial.expenses =
+      state.financial.expenses.filter(
+        item =>
+          item.id !== expense.id
+      );
+
+    return;
+
+  }
+
+
+  nameInput.value = '';
+
+  amountInput.value = '';
+
+
+  renderFinancial();
+
+
+  showToast(
+    'Expense added'
+  );
+
+}
+
+
+/* ============================================================
+   DELETE EXPENSE
+   ============================================================ */
+
+async function deleteExpense(id) {
+
+  const confirmed =
+    confirm(
+      'Delete this expense from your monthly plan?'
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  const oldExpenses =
+    [...state.financial.expenses];
+
+
+  state.financial.expenses =
+    state.financial.expenses.filter(
+      expense =>
+        expense.id !== id
+    );
+
+
+  const saved =
+    await persistState();
+
+
+  if (!saved) {
+
+    state.financial.expenses =
+      oldExpenses;
+
+    return;
+
+  }
+
+
+  renderFinancial();
+
+
+  showToast(
+    'Expense deleted'
+  );
+
+}
+
+
+/* ============================================================
+   SAVE SAVINGS TARGET
+   ============================================================ */
+
+async function saveSavingsTarget() {
+
+  const input =
+    document.getElementById(
+      'savingsTargetInput'
+    );
+
+
+  const target =
+    parseFloat(
+      input.value
+    );
+
+
+  if (
+    isNaN(target) ||
+    target < 0
+  ) {
+
+    alert(
+      'Please enter a valid savings target.'
+    );
+
+    return;
+
+  }
+
+
+  const oldTarget =
+    state.financial.savingsTarget;
+
+
+  state.financial.savingsTarget =
+    target;
+
+
+  const saved =
+    await persistState();
+
+
+  if (!saved) {
+
+    state.financial.savingsTarget =
+      oldTarget;
+
+    return;
+
+  }
+
+
+  renderFinancial();
+
+
+  showToast(
+    'Savings target saved'
+  );
+
+}
+
+
+/* ============================================================
+   RENDER FINANCIAL
+   ============================================================ */
+
+function renderFinancial() {
+
+  if (!state) {
+
+    return;
+
+  }
+
+
+  const {
+
+    salary,
+
+    expenses,
+
+    savingsTarget,
+
+    remaining,
+
+    expensePercentage,
+
+    savingsPercentage
+
+  } = financialTotals();
+
+
+  document.getElementById(
+    'salaryInput'
+  ).value =
+    salary || '';
+
+
+  document.getElementById(
+    'savingsTargetInput'
+  ).value =
+    savingsTarget || '';
+
+
+  document.getElementById(
+    'financeSalary'
+  ).textContent =
+    formatMoney(
+      salary
+    );
+
+
+  document.getElementById(
+    'financeExpenses'
+  ).textContent =
+    formatMoney(
+      expenses
+    );
+
+
+  document.getElementById(
+    'financeSavings'
+  ).textContent =
+    formatMoney(
+      savingsTarget
+    );
+
+
+  const remainingElement =
+    document.getElementById(
+      'financeRemaining'
+    );
+
+
+  remainingElement.textContent =
+    formatMoney(
+      remaining
+    );
+
+
+  remainingElement.classList.remove(
+    'positive',
+    'warning',
+    'accent'
+  );
+
+
+  if (remaining > 0) {
+
+    remainingElement.classList.add(
+      'positive'
+    );
+
+  }
+
+  else if (remaining < 0) {
+
+    remainingElement.classList.add(
+      'warning'
+    );
+
+  }
+
+
+  /*
+    Expense allocation progress.
+    Maximum is 100%.
+  */
+
+  const progress =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        expensePercentage
+      )
+    );
+
+
+  document.getElementById(
+    'financeProgress'
+  ).style.width =
+    progress.toFixed(1) +
+    '%';
+
+
+  document.getElementById(
+    'expensePercentage'
+  ).textContent =
+    expensePercentage.toFixed(1) +
+    '% expenses';
+
+
+  document.getElementById(
+    'savingsPercentage'
+  ).textContent =
+    savingsPercentage.toFixed(1) +
+    '% savings';
+
+
+  renderExpenses();
+
+
+  renderSavingsGoal();
+
+
+  renderFinancialMessage();
+
+}
+
+
+/* ============================================================
+   RENDER EXPENSES
+   ============================================================ */
+
+function renderExpenses() {
+
+  const container =
+    document.getElementById(
+      'expenseList'
+    );
+
+
+  const expenses =
+    state.financial.expenses;
+
+
+  if (
+    expenses.length === 0
+  ) {
+
+    container.innerHTML = `
+
+      <div class="empty-state">
+
+        No expenses added yet.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    expenses.map(
+      expense => `
+
+        <div class="expense-item">
+
+          <div>
+
+            <div class="expense-name">
+
+              ${escapeHtml(
+                expense.name
+              )}
+
+            </div>
+
+            <div class="expense-category">
+
+              ${escapeHtml(
+                expense.category
+              )}
+
+            </div>
+
+          </div>
+
+
+          <div class="expense-amount">
+
+            ${formatMoney(
+              expense.amount
+            )}
+
+          </div>
+
+
+          <button
+            class="delete-expense"
+            onclick="deleteExpense('${expense.id}')"
+            title="Delete expense"
+          >
+            ✕
+          </button>
+
+        </div>
+
+      `
+    )
+    .join('');
+
+}
+
+
+/* ============================================================
+   SAVINGS GOAL
+   ============================================================ */
+
+function renderSavingsGoal() {
+
+  const {
+
+    savingsTarget
+
+  } = financialTotals();
+
+
+  const salary =
+    Number(
+      state.financial.salary
+    ) || 0;
+
+
+  const expenses =
+    state.financial.expenses.reduce(
+      (
+        sum,
+        expense
+      ) =>
+        sum +
+        Number(expense.amount),
+      0
+    );
+
+
+  /*
+    This is the amount that can actually
+    be saved after planned expenses.
+  */
+
+  const availableForSavings =
+    Math.max(
+      0,
+      salary -
+      expenses
+    );
+
+
+  let progress = 0;
+
+
+  if (
+    savingsTarget > 0
+  ) {
+
+    progress =
+      Math.min(
+        100,
+        (
+          availableForSavings /
+          savingsTarget
+        ) * 100
+      );
+
+  }
+
+
+  document.getElementById(
+    'goalProgressFill'
+  ).style.width =
+    progress.toFixed(1) +
+    '%';
+
+
+  document.getElementById(
+    'goalSavedText'
+  ).textContent =
+    'Available: ' +
+    formatMoney(
+      availableForSavings
+    );
+
+
+  document.getElementById(
+    'goalTargetText'
+  ).textContent =
+    'Target: ' +
+    formatMoney(
+      savingsTarget
+    );
+
+}
+
+
+/* ============================================================
+   FINANCIAL MESSAGE
+   ============================================================ */
+
+function renderFinancialMessage() {
+
+  const {
+
+    salary,
+
+    expenses,
+
+    savingsTarget,
+
+    remaining
+
+  } = financialTotals();
+
+
+  const element =
+    document.getElementById(
+      'financialMessage'
+    );
+
+
+  if (
+    salary === 0
+  ) {
+
+    element.textContent =
+      'Add your monthly salary to start your financial plan.';
+
+    return;
+
+  }
+
+
+  if (
+    remaining < 0
+  ) {
+
+    element.innerHTML = `
+
+      <strong>
+        Your current plan is over budget.
+      </strong>
+
+      <br><br>
+
+      Your planned expenses and savings are
+      ${formatMoney(
+        Math.abs(remaining)
+      )}
+      higher than your monthly income.
+
+      Consider reducing expenses or adjusting
+      your savings target.
+
+    `;
+
+    return;
+
+  }
+
+
+  if (
+    savingsTarget > 0 &&
+    remaining === 0
+  ) {
+
+    element.innerHTML = `
+
+      <strong>
+        Your monthly plan is fully allocated.
+      </strong>
+
+      <br><br>
+
+      Your salary is completely assigned to
+      expenses and your savings target.
+
+    `;
+
+    return;
+
+  }
+
+
+  if (
+    remaining > 0
+  ) {
+
+    element.innerHTML = `
+
+      <strong>
+        You have ${formatMoney(
+          remaining
+        )} unallocated.
+      </strong>
+
+      <br><br>
+
+      You could use this amount for additional
+      savings, investments, emergency funds,
+      or other financial goals.
+
+    `;
+
+  }
 
 }
 
@@ -1568,7 +3402,7 @@ function exportExcel() {
   ) {
 
     alert(
-      'Excel library failed to load — check your connection and try again.'
+      'Excel library failed to load. Check your connection and try again.'
     );
 
     return;
@@ -1576,28 +3410,92 @@ function exportExcel() {
   }
 
 
-  const {
-    totalPaid,
-    remaining,
-    percent
-  } = totals();
+  const loan =
+    loanTotals();
 
+
+  const finance =
+    financialTotals();
+
+
+  /* ---------------------------
+     Summary
+     --------------------------- */
 
   const summaryRows = [
 
-    ['Loan Statement — Summary'],
+    [
+      'Personal Finance Statement'
+    ],
 
     [],
 
-    ['Original Principal', state.totalLoan],
+    [
+      'LOAN PLANNING'
+    ],
 
-    ['Total Paid', totalPaid],
+    [
+      'Original Principal',
+      state.totalLoan
+    ],
 
-    ['Outstanding Balance', remaining],
+    [
+      'Total Paid',
+      loan.totalPaid
+    ],
 
-    ['Percent Paid', percent.toFixed(2) + '%'],
+    [
+      'Outstanding Balance',
+      loan.remaining
+    ],
 
-    ['Number of Payments', state.payments.length],
+    [
+      'Percent Paid',
+      loan.percent.toFixed(2) + '%'
+    ],
+
+    [
+      'Number of Payments',
+      state.payments.length
+    ],
+
+    [],
+
+    [
+      'FINANCIAL PLANNING'
+    ],
+
+    [
+      'Monthly Salary',
+      finance.salary
+    ],
+
+    [
+      'Monthly Expenses',
+      finance.expenses
+    ],
+
+    [
+      'Savings Target',
+      finance.savingsTarget
+    ],
+
+    [
+      'Unallocated',
+      finance.remaining
+    ],
+
+    [
+      'Expense Percentage',
+      finance.expensePercentage.toFixed(2) + '%'
+    ],
+
+    [
+      'Savings Percentage',
+      finance.savingsPercentage.toFixed(2) + '%'
+    ],
+
+    [],
 
     [
       'Statement Generated',
@@ -1614,14 +3512,28 @@ function exportExcel() {
 
 
   summarySheet['!cols'] = [
-    { wch: 24 },
-    { wch: 22 }
+
+    {
+      wch: 28
+    },
+
+    {
+      wch: 22
+    }
+
   ];
 
 
-  const sortedAsc =
+  /* ---------------------------
+     Loan history
+     --------------------------- */
+
+  const sortedPayments =
     [...state.payments].sort(
-      (a, b) =>
+      (
+        a,
+        b
+      ) =>
         new Date(a.date) -
         new Date(b.date)
     );
@@ -1631,7 +3543,7 @@ function exportExcel() {
     state.totalLoan;
 
 
-  const historyRows = [
+  const loanRows = [
 
     [
       '#',
@@ -1645,18 +3557,25 @@ function exportExcel() {
   ];
 
 
-  sortedAsc.forEach(
-    (payment, index) => {
+  sortedPayments.forEach(
+    (
+      payment,
+      index
+    ) => {
 
       running -=
-        Number(payment.amount);
+        Number(
+          payment.amount
+        );
 
 
       const d =
-        new Date(payment.date);
+        new Date(
+          payment.date
+        );
 
 
-      historyRows.push([
+      loanRows.push([
 
         index + 1,
 
@@ -1680,28 +3599,109 @@ function exportExcel() {
   );
 
 
-  const historySheet =
+  const loanSheet =
     XLSX.utils.aoa_to_sheet(
-      historyRows
+      loanRows
     );
 
 
-  historySheet['!cols'] = [
+  loanSheet['!cols'] = [
 
-    { wch: 5 },
+    {
+      wch: 5
+    },
 
-    { wch: 14 },
+    {
+      wch: 14
+    },
 
-    { wch: 12 },
+    {
+      wch: 12
+    },
 
-    { wch: 16 },
+    {
+      wch: 16
+    },
 
-    { wch: 32 },
+    {
+      wch: 32
+    },
 
-    { wch: 18 }
+    {
+      wch: 20
+    }
 
   ];
 
+
+  /* ---------------------------
+     Expense plan
+     --------------------------- */
+
+  const expenseRows = [
+
+    [
+      '#',
+      'Expense',
+      'Category',
+      'Monthly Amount'
+    ]
+
+  ];
+
+
+  state.financial.expenses.forEach(
+    (
+      expense,
+      index
+    ) => {
+
+      expenseRows.push([
+
+        index + 1,
+
+        expense.name,
+
+        expense.category,
+
+        expense.amount
+
+      ]);
+
+    }
+  );
+
+
+  const expenseSheet =
+    XLSX.utils.aoa_to_sheet(
+      expenseRows
+    );
+
+
+  expenseSheet['!cols'] = [
+
+    {
+      wch: 5
+    },
+
+    {
+      wch: 28
+    },
+
+    {
+      wch: 20
+    },
+
+    {
+      wch: 20
+    }
+
+  ];
+
+
+  /* ---------------------------
+     Workbook
+     --------------------------- */
 
   const workbook =
     XLSX.utils.book_new();
@@ -1716,13 +3716,20 @@ function exportExcel() {
 
   XLSX.utils.book_append_sheet(
     workbook,
-    historySheet,
-    'Payment History'
+    loanSheet,
+    'Loan History'
+  );
+
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    expenseSheet,
+    'Monthly Expenses'
   );
 
 
   const filename =
-    `loan-statement-${
+    `financial-plan-${
       new Date()
         .toISOString()
         .slice(0, 10)
@@ -1736,7 +3743,7 @@ function exportExcel() {
 
 
   showToast(
-    'Statement downloaded'
+    'Financial statement downloaded'
   );
 
 }
@@ -1761,14 +3768,20 @@ function backupData() {
 
   const backup = {
 
-    app: 'Loan Statement',
+    app:
+      'Personal Finance Planner',
 
-    version: 1,
+
+    version:
+      2,
+
 
     exportedAt:
       new Date().toISOString(),
 
-    data: state
+
+    data:
+      state
 
   };
 
@@ -1792,32 +3805,45 @@ function backupData() {
 
 
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
 
 
   const link =
-    document.createElement('a');
+    document.createElement(
+      'a'
+    );
 
 
-  link.href = url;
+  link.href =
+    url;
 
 
   link.download =
-    `loan-backup-${
+    `finance-backup-${
       new Date()
         .toISOString()
         .slice(0, 10)
     }.json`;
 
 
-  document.body.appendChild(link);
+  document.body.appendChild(
+    link
+  );
+
 
   link.click();
 
-  document.body.removeChild(link);
+
+  document.body.removeChild(
+    link
+  );
 
 
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(
+    url
+  );
 
 
   showToast(
@@ -1851,12 +3877,10 @@ async function restoreData(event) {
 
 
     const backup =
-      JSON.parse(text);
+      JSON.parse(
+        text
+      );
 
-
-    /*
-      Support the expected backup format.
-    */
 
     if (
       !backup.data ||
@@ -1876,13 +3900,9 @@ async function restoreData(event) {
       );
 
 
-    /*
-      Ask before replacing existing data.
-    */
-
     const confirmed =
       confirm(
-        'This will replace the current loan data with the backup. Continue?'
+        'This will replace your current loan and financial planning data. Continue?'
       );
 
 
@@ -1895,18 +3915,41 @@ async function restoreData(event) {
     }
 
 
+    const oldState =
+      state;
+
+
     state =
       restored;
 
 
-    await persistState();
+    const saved =
+      await persistState();
 
 
-    render();
+    if (!saved) {
+
+      state =
+        oldState;
+
+
+      alert(
+        'Could not save restored data.'
+      );
+
+
+      return;
+
+    }
+
+
+    renderLoan();
+
+    renderFinancial();
 
 
     showToast(
-      'Backup restored successfully'
+      'Financial data restored successfully'
     );
 
   }
@@ -1919,16 +3962,11 @@ async function restoreData(event) {
 
 
     alert(
-      'Could not restore this file. Please select a valid loan backup.'
+      'Could not restore this file. Please select a valid finance backup.'
     );
 
   }
 
-
-  /*
-    Reset file input so the
-    same file can be selected again.
-  */
 
   event.target.value = '';
 
@@ -1936,7 +3974,7 @@ async function restoreData(event) {
 
 
 /* ============================================================
-   INITIALIZE APPLICATION
+   INITIALIZE
    ============================================================ */
 
 async function init() {
@@ -1945,7 +3983,22 @@ async function init() {
     await loadState();
 
 
-  render();
+  renderLoan();
+
+  renderFinancial();
+
+
+  document.getElementById(
+    'statementDate'
+  ).textContent =
+    new Date().toLocaleDateString(
+      'en-US',
+      {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
+    );
 
 }
 
